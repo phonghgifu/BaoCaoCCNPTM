@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
+import { reportError } from '@/lib/telemetry'
 
 interface DeletePostButtonProps {
   postId: string
@@ -34,7 +35,7 @@ export function DeletePostButton({ postId, postTitle }: DeletePostButtonProps) {
       router.refresh()
     } catch (err) {
       alert('Có lỗi xảy ra khi xóa bài viết')
-      console.error(err)
+      reportError(err, { source: 'DeletePostButton.handleDelete', postId })
     } finally {
       setLoading(false)
     }

@@ -13,7 +13,7 @@ export default async function EditPostPage({ params }: EditPostPageProps) {
   const { data: { user } } = await supabase.auth.getUser()
 
   if (!user) {
-    redirect('/auth/login')
+    redirect('/login')
   }
 
   const { data: post, error } = await supabase

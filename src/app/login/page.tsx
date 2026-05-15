@@ -1,16 +1,15 @@
 'use client'
 
-import { useState } from 'react'
-import { useRouter, useSearchParams } from 'next/navigation'
+import { useEffect, useState } from 'react'
+import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/client'
 
 export default function LoginPage() {
   const router = useRouter()
-  const searchParams = useSearchParams()
   const supabase = createClient()
-  
-  const message = searchParams.get('message')
+
+  const [message, setMessage] = useState<string | null>(null)
   
   const [formData, setFormData] = useState({
     email: '',
@@ -18,6 +17,11 @@ export default function LoginPage() {
   })
   const [error, setError] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search)
+    setMessage(params.get('message'))
+  }, [])
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target

@@ -1,4 +1,4 @@
--- Auth types and interfaces for TypeScript
+// Auth types and interfaces for TypeScript
 export interface User {
   id: string
   email: string

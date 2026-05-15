@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import { Post } from '@/types/database'
 import { DeletePostButton } from './delete-post-button'
+import { deriveCategory, estimateReadTime } from '@/lib/content'
 
 interface PostListProps {
   posts: Post[]
@@ -12,40 +13,53 @@ export function PostList({ posts }: PostListProps) {
       {posts.map((post) => (
         <div
           key={post.id}
-          className="bg-white p-4 rounded-lg shadow border border-gray-200"
+          role="article"
+          aria-labelledby={`post-title-${post.id}`}
+          className="surface-card rounded-[1.75rem] p-5 sm:p-6"
         >
-          <div className="flex justify-between items-start">
+          <div className="flex flex-col gap-5 lg:flex-row lg:items-start lg:justify-between">
             <div className="flex-1">
-              <div className="flex items-center gap-2 mb-2">
-                <h2 className="text-xl font-semibold">{post.title}</h2>
+              <div className="flex flex-wrap items-center gap-2">
+                <span className="rounded-full bg-blue-50 px-3 py-1 text-xs font-semibold uppercase tracking-[0.18em] text-blue-700">
+                  {deriveCategory(post)}
+                </span>
                 <span
-                  className={`px-2 py-1 text-xs rounded-full ${
+                  className={`rounded-full px-3 py-1 text-xs font-semibold uppercase tracking-[0.18em] ${
                     post.status === 'published'
-                      ? 'bg-green-100 text-green-800'
-                      : 'bg-yellow-100 text-yellow-800'
+                      ? 'bg-emerald-50 text-emerald-700'
+                      : 'bg-amber-50 text-amber-700'
                   }`}
                 >
                   {post.status === 'published' ? 'Đã xuất bản' : 'Bản nháp'}
                 </span>
+                <span className="rounded-full bg-gray-100 px-3 py-1 text-xs font-semibold uppercase tracking-[0.18em] text-gray-600">
+                  {estimateReadTime(post)} phút đọc
+                </span>
               </div>
+
+              <h2 id={`post-title-${post.id}`} className="mt-4 text-2xl font-bold tracking-tight text-gray-900">{post.title}</h2>
+
               {post.excerpt && (
-                <p className="text-gray-600 text-sm mb-2">{post.excerpt}</p>
+                <p className="mt-3 max-w-3xl text-sm leading-7 text-gray-600">{post.excerpt}</p>
               )}
-              <p className="text-gray-400 text-xs">
+
+              <p className="mt-4 text-xs text-gray-500">
                 Tạo ngày: {new Date(post.created_at).toLocaleDateString('vi-VN')}
               </p>
             </div>
 
-            <div className="flex items-center gap-2">
+            <div className="flex flex-wrap items-center gap-2 lg:justify-end">
               <Link
                 href={`/posts/${post.slug}`}
-                className="text-gray-500 hover:text-gray-700 px-3 py-1 text-sm"
+                aria-label={`Xem bài viết ${post.title}`}
+                className="rounded-xl border border-[var(--surface-border)] px-4 py-2 text-sm font-medium text-[var(--page-fg)] transition hover:border-blue-300 hover:text-blue-700"
               >
                 Xem
               </Link>
               <Link
                 href={`/dashboard/edit/${post.id}`}
-                className="text-blue-600 hover:text-blue-500 px-3 py-1 text-sm"
+                aria-label={`Sửa bài viết ${post.title}`}
+                className="rounded-xl bg-blue-600 px-4 py-2 text-sm font-semibold text-white transition hover:-translate-y-0.5 hover:bg-blue-700"
               >
                 Sửa
               </Link>

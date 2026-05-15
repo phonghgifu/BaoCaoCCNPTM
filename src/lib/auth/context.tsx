@@ -2,6 +2,7 @@
 
 import { createContext, useContext, useEffect, useState, ReactNode } from 'react'
 import { createClient } from '@/lib/supabase/client'
+import { reportError } from '@/lib/telemetry'
 import type { User, AuthSession } from './types'
 
 const AuthContext = createContext<AuthSession | undefined>(undefined)
@@ -29,7 +30,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           isAuthenticated: !!session,
         })
       } catch (error) {
-        console.error('Error getting session:', error)
+        reportError(error, { source: 'AuthProvider.getInitialSession' })
         setAuthSession({
           user: null,
           isLoading: false,

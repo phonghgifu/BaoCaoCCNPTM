@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
+import { reportError } from '@/lib/telemetry'
 
 interface ImageUploadProps {
   onImageUploaded: (url: string) => void
@@ -55,7 +56,7 @@ export function ImageUpload({ onImageUploaded, disabled = false }: ImageUploadPr
         })
 
       if (uploadError) {
-        console.error('Upload error details:', uploadError)
+        reportError(uploadError, { source: 'ImageUpload.upload', fileName })
         throw new Error(`Lỗi upload: ${uploadError.message}`)
       }
 
@@ -67,7 +68,7 @@ export function ImageUpload({ onImageUploaded, disabled = false }: ImageUploadPr
       const imageUrl = publicData.publicUrl
       onImageUploaded(imageUrl)
     } catch (err: any) {
-      console.error('Image upload error:', err)
+      reportError(err, { source: 'ImageUpload.handleFileChange' })
       setError(err.message || 'Có lỗi xảy ra khi upload ảnh. Vui lòng kiểm tra đăng nhập hoặc thử lại.')
       setPreview(null)
     } finally {

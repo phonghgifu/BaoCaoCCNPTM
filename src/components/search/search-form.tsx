@@ -16,17 +16,17 @@ export function SearchForm() {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="flex gap-2">
+    <form onSubmit={handleSubmit} className="flex flex-col gap-2 sm:flex-row">
       <input
         type="text"
         value={query}
         onChange={(e) => setQuery(e.target.value)}
         placeholder="Tìm kiếm bài viết..."
-        className="flex-1 px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+        className="flex-1 rounded-2xl border border-[var(--surface-border)] px-4 py-3 shadow-sm focus:border-blue-500 focus:outline-none"
       />
       <button
         type="submit"
-        className="px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 font-medium transition-colors"
+        className="rounded-2xl bg-blue-600 px-6 py-3 font-medium text-white transition hover:bg-blue-700"
       >
         Tìm
       </button>

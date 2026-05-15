@@ -21,6 +21,12 @@ export default async function ProfilePage() {
     .eq('id', user.id)
     .single()
 
+  const { data: ownedPosts } = await supabase
+    .from('posts')
+    .select('id, title, slug, status, created_at, published_at, image_url')
+    .eq('author_id', user.id)
+    .order('created_at', { ascending: false })
+
   if (error || !profile) {
     return (
       <main className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100">
@@ -33,6 +39,11 @@ export default async function ProfilePage() {
       </main>
     )
   }
+
+  const posts = ownedPosts || []
+  const publishedCount = posts.filter((post) => post.status === 'published').length
+  const draftCount = posts.filter((post) => post.status === 'draft').length
+  const latestPosts = posts.slice(0, 3)
 
   return (
     <main className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 py-12">
@@ -94,6 +105,70 @@ export default async function ProfilePage() {
               <h2 className="text-2xl font-bold text-gray-900 mb-8">Chỉnh sửa thông tin</h2>
               <ProfileForm profile={profile} />
             </div>
+          </div>
+        </div>
+
+        <div className="mt-8 grid gap-4 sm:grid-cols-3">
+          <div className="rounded-2xl bg-white p-5 shadow-sm border border-gray-100">
+            <p className="text-xs font-semibold uppercase tracking-wider text-gray-500">Tổng bài viết</p>
+            <p className="mt-2 text-3xl font-black text-gray-900">{posts.length}</p>
+          </div>
+          <div className="rounded-2xl bg-white p-5 shadow-sm border border-gray-100">
+            <p className="text-xs font-semibold uppercase tracking-wider text-emerald-600">Đã xuất bản</p>
+            <p className="mt-2 text-3xl font-black text-gray-900">{publishedCount}</p>
+          </div>
+          <div className="rounded-2xl bg-white p-5 shadow-sm border border-gray-100">
+            <p className="text-xs font-semibold uppercase tracking-wider text-amber-600">Bản nháp</p>
+            <p className="mt-2 text-3xl font-black text-gray-900">{draftCount}</p>
+          </div>
+        </div>
+
+        <div className="mt-8 bg-white rounded-xl shadow-sm border border-gray-100 p-6 sm:p-8">
+          <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
+            <div>
+              <h2 className="text-xl font-bold text-gray-900">Bài viết gần đây</h2>
+              <p className="text-sm text-gray-500">Các bài viết mới nhất của bạn hiển thị ở đây để quản lý nhanh hơn.</p>
+            </div>
+            <a href="/dashboard" className="text-sm font-medium text-blue-600 hover:text-blue-700">
+              Tới Dashboard →
+            </a>
+          </div>
+
+          <div className="mt-6 space-y-4">
+            {latestPosts.length > 0 ? latestPosts.map((post) => (
+              <a
+                key={post.id}
+                href={`/posts/${post.slug}`}
+                className="group flex gap-4 rounded-2xl border border-gray-100 bg-gray-50 p-4 transition hover:border-blue-200 hover:bg-blue-50/50"
+              >
+                {post.image_url ? (
+                  <img src={post.image_url} alt={post.title} className="h-20 w-28 rounded-lg object-cover flex-shrink-0" />
+                ) : (
+                  <div className="h-20 w-28 rounded-lg bg-gradient-to-br from-blue-500 via-cyan-500 to-violet-500 flex-shrink-0" />
+                )}
+                <div className="min-w-0 flex-1">
+                  <div className="flex items-center gap-2 text-xs uppercase tracking-wider text-gray-500">
+                    <span className={`rounded-full px-2 py-1 font-semibold ${post.status === 'published' ? 'bg-emerald-50 text-emerald-700' : 'bg-amber-50 text-amber-700'}`}>
+                      {post.status === 'published' ? 'Đã xuất bản' : 'Bản nháp'}
+                    </span>
+                  </div>
+                  <h3 className="mt-2 line-clamp-1 text-lg font-semibold text-gray-900 group-hover:text-blue-700">{post.title}</h3>
+                  <p className="mt-1 text-sm text-gray-500">
+                    {post.published_at
+                      ? new Date(post.published_at).toLocaleDateString('vi-VN', {
+                          year: 'numeric',
+                          month: 'long',
+                          day: 'numeric',
+                        })
+                      : new Date(post.created_at || '').toLocaleDateString('vi-VN')}
+                  </p>
+                </div>
+              </a>
+            )) : (
+              <div className="rounded-2xl border border-dashed border-gray-300 bg-gray-50 px-4 py-8 text-center text-sm text-gray-500">
+                Bạn chưa có bài viết nào.
+              </div>
+            )}
           </div>
         </div>
       </div>

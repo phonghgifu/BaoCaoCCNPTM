@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
+import { reportError } from '@/lib/telemetry'
 
 interface LikeButtonProps {
   postId: string
@@ -74,7 +75,7 @@ export function LikeButton({ postId, userId, initialLikeCount }: LikeButtonProps
 
       router.refresh()
     } catch (err) {
-      console.error('Lỗi khi like:', err)
+      reportError(err, { source: 'LikeButton.handleLike', postId })
     } finally {
       setLoading(false)
     }
@@ -84,15 +85,17 @@ export function LikeButton({ postId, userId, initialLikeCount }: LikeButtonProps
     <button
       onClick={handleLike}
       disabled={loading || !userId}
-      className={`flex items-center gap-2 px-4 py-2 rounded-md font-medium transition ${
+      className={`like-button flex items-center gap-2 px-4 py-2 rounded-md font-medium transition ${
         isLiked
-          ? 'bg-red-100 text-red-600 hover:bg-red-200'
+          ? 'bg-red-100 text-red-600 hover:bg-red-200 liked'
           : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
       } disabled:opacity-50 disabled:cursor-not-allowed`}
       title={!userId ? 'Đăng nhập để like' : ''}
+      aria-pressed={isLiked}
+      aria-label={isLiked ? 'Bỏ thích bài viết' : 'Thích bài viết'}
     >
       <span className="text-xl">{isLiked ? '❤️' : '🤍'}</span>
-      <span>{likeCount}</span>
+      <span aria-live="polite">{likeCount}</span>
     </button>
   )
 }
