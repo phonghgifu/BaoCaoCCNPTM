@@ -9,6 +9,7 @@ FROM node:20-alpine AS builder
 WORKDIR /app
 COPY --from=dependencies /app/node_modules ./node_modules
 COPY . .
+COPY .env.local .env.local
 
 # Build Next.js application
 RUN npm run build

@@ -8,13 +8,11 @@ services:
     container_name: simple-blog-app
     ports:
       - "3000:3000"
+    env_file:
+      - .env.local
     environment:
       # Next.js Configuration
       NODE_ENV: production
-      
-      # Supabase Configuration (from .env.local)
-      NEXT_PUBLIC_SUPABASE_URL: ${NEXT_PUBLIC_SUPABASE_URL}
-      NEXT_PUBLIC_SUPABASE_ANON_KEY: ${NEXT_PUBLIC_SUPABASE_ANON_KEY}
     
     restart: unless-stopped
     

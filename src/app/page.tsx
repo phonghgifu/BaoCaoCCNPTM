@@ -222,7 +222,7 @@ export default async function HomePage() {
                   <div className="relative h-80 overflow-hidden lg:h-auto">
                     <ImageWithLQIP
                       src={featuredPost.image_url}
-                      alt={featuredPost.title}
+                      alt={featuredPost.title || 'Featured Post'}
                       className="h-full w-full object-cover transition duration-500 group-hover:scale-110"
                     />
                     <div className="absolute inset-0 bg-gradient-to-r from-gray-900 via-transparent to-transparent" />
@@ -262,7 +262,7 @@ export default async function HomePage() {
                     <div className="flex items-center gap-3">
                       <img
                         src={featuredPost.profiles?.avatar_url || 'https://images.pexels.com/photos/220453/pexels-photo-220453.jpeg?auto=compress&cs=tinysrgb&w=150'}
-                        alt={featuredPost.profiles?.display_name}
+                        alt={featuredPost.profiles?.display_name || 'Author'}
                         className="h-11 w-11 rounded-full object-cover ring-2 ring-white/30"
                       />
                       <div>
@@ -341,7 +341,7 @@ export default async function HomePage() {
                     <div key={author.authorId} className="flex items-center gap-3 rounded-2xl bg-gradient-to-r from-blue-50/50 to-cyan-50/50 p-4 transition hover:shadow-md">
                       <img
                         src={author.avatar}
-                        alt={author.name}
+                        alt={author.name || 'Author'}
                         className="h-12 w-12 rounded-xl object-cover ring-2 ring-blue-200"
                       />
                       <div className="flex-1 min-w-0">
@@ -385,7 +385,7 @@ export default async function HomePage() {
                     {post.image_url ? (
                       <ImageWithLQIP
                         src={post.image_url}
-                        alt={post.title}
+                        alt={post.title || 'Post'}
                         className="h-full w-full object-cover transition duration-500 group-hover:scale-110"
                       />
                     ) : (
@@ -435,7 +435,7 @@ export default async function HomePage() {
                             post.profiles?.avatar_url ||
                             'https://images.pexels.com/photos/220453/pexels-photo-220453.jpeg?auto=compress&cs=tinysrgb&w=150'
                           }
-                          alt={post.profiles?.display_name}
+                          alt={post.profiles?.display_name || 'Author'}
                           className="h-8 w-8 rounded-full object-cover"
                         />
                         <div className="min-w-0">

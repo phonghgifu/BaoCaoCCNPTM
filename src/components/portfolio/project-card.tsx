@@ -219,7 +219,7 @@ export function ProjectCard({ project }: { project: Project }) {
         </div>
       </div>
 
-      <Modal open={open} onOpenChange={setOpen}>
+      <Modal open={open} onClose={() => setOpen(false)}>
         <div className="space-y-6 py-6">
           {imageUrl ? (
             <img
