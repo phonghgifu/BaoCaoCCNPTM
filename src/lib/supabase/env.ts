@@ -19,6 +19,23 @@ export function getSupabaseEnv(): SupabaseEnv | null {
 }
 
 export function createSupabaseDisabledClient() {
+  // Mock query builder that supports method chaining
+  const mockQueryBuilder = {
+    select: function() { return this },
+    insert: function() { return this },
+    update: function() { return this },
+    delete: function() { return this },
+    eq: function() { return this },
+    or: function() { return this },
+    order: function() { return this },
+    limit: function() { return this },
+    range: function() { return this },
+    count: function() { return this },
+    maybeSingle: function() { return this },
+    single: function() { return this },
+    then: async function() { return { data: null, error: null } },
+  }
+
   return {
     auth: {
       getSession: async () => ({ data: { session: null }, error: null }),
@@ -37,18 +54,8 @@ export function createSupabaseDisabledClient() {
         },
       }),
     },
-    from: () => ({
-      select: () => Promise.resolve({ data: null, error: null }),
-      insert: () => Promise.resolve({ data: null, error: null }),
-      update: () => Promise.resolve({ data: null, error: null }),
-      delete: () => Promise.resolve({ data: null, error: null }),
-      eq: () => ({
-        select: () => Promise.resolve({ data: null, error: null }),
-        insert: () => Promise.resolve({ data: null, error: null }),
-        update: () => Promise.resolve({ data: null, error: null }),
-        delete: () => Promise.resolve({ data: null, error: null }),
-      }),
-    }),
+    from: () => mockQueryBuilder,
+    rpc: async () => ({ data: null, error: null }),
     storage: {
       from: () => ({
         upload: async () => ({ data: null, error: new Error('Supabase not configured') }),
