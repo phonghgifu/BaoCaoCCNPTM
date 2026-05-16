@@ -1,16 +1,18 @@
 import { createServerClient } from '@supabase/ssr'
 import { NextResponse, type NextRequest } from 'next/server'
+import { getSupabaseEnv } from '@/lib/supabase/env'
 
 export async function GET(request: NextRequest) {
   const requestUrl = new URL(request.url)
   const code = requestUrl.searchParams.get('code')
   const origin = requestUrl.origin
   const response = NextResponse.redirect(`${origin}/`)
+  const env = getSupabaseEnv()
 
-  if (code) {
+  if (code && env) {
     const supabase = createServerClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+      env.url,
+      env.anonKey,
       {
         cookies: {
           getAll() {
@@ -26,6 +28,10 @@ export async function GET(request: NextRequest) {
     )
 
     await supabase.auth.exchangeCodeForSession(code)
+  }
+
+  if (code && !env) {
+    console.warn('Supabase env vars are missing in /auth/callback')
   }
 
   // Redirect về dashboard sau khi đăng nhập thành công

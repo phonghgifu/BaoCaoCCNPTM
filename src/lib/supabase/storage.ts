@@ -1,8 +1,7 @@
 import { createClient } from '@/lib/supabase/client'
 
-const supabase = createClient()
-
 export async function uploadProjectImage(file: File, key?: string) {
+  const supabase = createClient()
   const bucket = process.env.NEXT_PUBLIC_SUPABASE_PROJECTS_BUCKET ?? 'blog-images'
   const fileName = key ?? `projects/${Date.now()}-${file.name}`
 
@@ -18,6 +17,7 @@ export async function uploadProjectImage(file: File, key?: string) {
 }
 
 export function getPublicUrl(key: string) {
+  const supabase = createClient()
   const bucket = process.env.NEXT_PUBLIC_SUPABASE_PROJECTS_BUCKET ?? 'blog-images'
   const { data } = supabase.storage.from(bucket).getPublicUrl(key)
   return data.publicUrl

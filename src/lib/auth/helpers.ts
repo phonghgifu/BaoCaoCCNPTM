@@ -1,13 +1,16 @@
 import { createClient } from '@/lib/supabase/client'
 import type { SignUpData, LoginData } from './types'
 
-const supabase = createClient()
+function getSupabaseClient() {
+  return createClient()
+}
 
 // ============================================================
 // ĐĂNG KÝ TÀI KHOẢN
 // ============================================================
 export async function signUp(data: SignUpData) {
   try {
+    const supabase = getSupabaseClient()
     const { data: authData, error } = await supabase.auth.signUp({
       email: data.email,
       password: data.password,
@@ -38,6 +41,7 @@ export async function signUp(data: SignUpData) {
 // ============================================================
 export async function login(data: LoginData) {
   try {
+    const supabase = getSupabaseClient()
     const { data: authData, error } = await supabase.auth.signInWithPassword({
       email: data.email,
       password: data.password,
@@ -63,6 +67,7 @@ export async function login(data: LoginData) {
 // ============================================================
 export async function logout() {
   try {
+    const supabase = getSupabaseClient()
     const { error } = await supabase.auth.signOut()
 
     if (error) throw error
@@ -84,6 +89,7 @@ export async function logout() {
 // ============================================================
 export async function signInWithGitHub() {
   try {
+    const supabase = getSupabaseClient()
     const { data, error } = await supabase.auth.signInWithOAuth({
       provider: 'github',
       options: {
@@ -110,6 +116,7 @@ export async function signInWithGitHub() {
 // ============================================================
 export async function getSession() {
   try {
+    const supabase = getSupabaseClient()
     const {
       data: { session },
       error,

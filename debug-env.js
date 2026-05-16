@@ -5,7 +5,43 @@
  * Usage: node debug-env.js
  */
 
+const fs = require('fs')
+const path = require('path')
+const dotenv = require('dotenv')
+
+const rootDir = process.cwd()
+const scriptDir = __dirname
+
+function loadEnvFile(filePath) {
+  if (!fs.existsSync(filePath)) {
+    return false
+  }
+
+  dotenv.config({ path: filePath, override: false })
+  return true
+}
+
+const envFiles = [
+  path.join(rootDir, '.env.local'),
+  path.join(rootDir, '.env.development'),
+  path.join(rootDir, '.env.production'),
+]
+
+const loadedFiles = envFiles.filter(loadEnvFile)
+
 console.log('\n📋 === ENVIRONMENT VARIABLES DEBUG ===\n')
+console.log(`📁 Working directory: ${rootDir}`)
+console.log(`📁 Script directory: ${scriptDir}`)
+console.log('')
+
+console.log('0️⃣  Env File Check:')
+if (loadedFiles.length > 0) {
+  loadedFiles.forEach((file) => console.log(`   ✅ Loaded ${path.basename(file)} from ${file}`))
+} else {
+  console.log('   ❌ No local env file loaded')
+  console.log('   ℹ️  Expected: .env.local in the project root')
+}
+console.log('')
 
 const vars = {
   'NEXT_PUBLIC_SUPABASE_URL': process.env.NEXT_PUBLIC_SUPABASE_URL,
@@ -40,7 +76,7 @@ Object.entries(vars).forEach(([key, value]) => {
 
 // 3. Source detection
 console.log('\n3️⃣  Source Detection:')
-const envFiles = {
+const envSources = {
   '.env.local': 'Local development',
   '.env.production': 'Local production build',
   '.env.development': 'Dev environment',
@@ -78,7 +114,7 @@ if (vars['NEXT_PUBLIC_SUPABASE_URL'] && !isPlaceholder(vars['NEXT_PUBLIC_SUPABAS
 console.log('\n5️⃣  Quick Test Commands:')
 console.log('   Local dev:')
 console.log('      npm run dev')
-console.log('      Open: http://localhost:3000/api/debug')
+console.log('      Open: http://localhost:3000/api/debug-env')
 console.log('')
 console.log('   Local build:')
 console.log('      npm run build')
