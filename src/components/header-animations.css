@@ -1,0 +1,102 @@
+/**
+ * Header Animations & Effects
+ * 
+ * Glassmorphism, slide-in, and micro-interactions for Header component
+ */
+
+@layer components {
+  /* Glassmorphism effect for navbar */
+  .navbar-glass {
+    @apply bg-white/80 dark:bg-slate-900/80 backdrop-blur-md backdrop-saturate-200 border border-white/20 dark:border-slate-700/30;
+  }
+
+  /* Mobile menu slide-in animation */
+  @keyframes slideInDown {
+    from {
+      opacity: 0;
+      transform: translateY(-10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes slideOutUp {
+    from {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    to {
+      opacity: 0;
+      transform: translateY(-10px);
+    }
+  }
+
+  @keyframes fadeInOverlay {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+
+  @keyframes fadeOutOverlay {
+    from {
+      opacity: 1;
+    }
+    to {
+      opacity: 0;
+    }
+  }
+
+  /* Smooth overlay backdrop */
+  .menu-overlay-enter {
+    animation: fadeInOverlay 0.3s ease-out;
+  }
+
+  .menu-overlay-exit {
+    animation: fadeOutOverlay 0.3s ease-out;
+  }
+
+  /* Mobile menu slide animation */
+  .mobile-menu-enter {
+    animation: slideInDown 0.3s ease-out;
+  }
+
+  .mobile-menu-exit {
+    animation: slideOutUp 0.3s ease-out;
+  }
+
+  /* Button hover effects */
+  .btn-hover-lift {
+    @apply transition-all duration-300;
+  }
+
+  .btn-hover-lift:hover {
+    @apply -translate-y-1 shadow-lg;
+  }
+
+  .btn-hover-glow {
+    @apply transition-all duration-300 relative;
+  }
+
+  .btn-hover-glow:hover {
+    @apply shadow-lg shadow-blue-400/50;
+  }
+
+  /* Smooth menu item transitions */
+  .menu-item {
+    @apply transition-all duration-200 relative;
+  }
+
+  .menu-item::before {
+    @apply absolute left-0 bottom-0 w-0 h-0.5 bg-blue-600 transition-all duration-300;
+    content: '';
+  }
+
+  .menu-item:hover::before {
+    @apply w-full;
+  }
+}

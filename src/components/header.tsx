@@ -5,6 +5,7 @@ import { useEffect, useState, type FormEvent } from 'react'
 import { usePathname, useRouter } from 'next/navigation'
 import { useAuth } from '@/lib/auth/context'
 import { logout } from '@/lib/auth/helpers'
+import './header-animations.css'
 
 export function Header() {
   const { isAuthenticated, user } = useAuth()
@@ -62,7 +63,7 @@ export function Header() {
   }
 
   return (
-    <header className="sticky top-0 z-50 border-b border-(--surface-border) surface-glass shadow-[0_10px_40px_rgba(15,23,42,0.04)]">
+    <header className="sticky top-0 z-50 navbar-glass shadow-[0_10px_40px_rgba(15,23,42,0.04)]">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="flex h-18 items-center justify-between gap-4 py-2">
           <Link href="/" className="group flex items-center space-x-3">
@@ -175,64 +176,73 @@ export function Header() {
         </div>
 
         {isMobileMenuOpen && (
-          <div id="mobile-menu" role="navigation" aria-label="Điều hướng chính" className="md:hidden border-t border-(--surface-border) space-y-4 py-4 px-2">
-            <div className="space-y-2 rounded-2xl border border-(--surface-border) bg-(--surface-soft) p-3">
-              <label className="block text-xs uppercase tracking-[0.22em] font-semibold text-(--surface-muted) px-2">Điều hướng</label>
-              <Link href="/" className="block rounded-2xl px-4 py-3 text-(--page-fg) transition hover:bg-(--surface-soft)" onClick={() => setIsMobileMenuOpen(false)}>
-                Trang Chủ
-              </Link>
-              <Link href="/blog" className="block rounded-2xl px-4 py-3 text-(--page-fg) transition hover:bg-(--surface-soft)" onClick={() => setIsMobileMenuOpen(false)}>
-                Blog
-              </Link>
-              <Link href="/portfolio" className="block rounded-2xl px-4 py-3 text-(--page-fg) transition hover:bg-(--surface-soft)" onClick={() => setIsMobileMenuOpen(false)}>
-                Portfolio
-              </Link>
-              <button
-                type="button"
-                onClick={() => applyTheme(theme === 'dark' ? 'light' : 'dark')}
-                className="w-full rounded-2xl px-4 py-3 text-left text-(--page-fg) transition hover:bg-(--surface-soft)"
-              >
-                {theme === 'dark' ? 'Chuyển sang giao diện sáng' : 'Chuyển sang giao diện tối'}
-              </button>
+          <>
+            {/* Overlay backdrop */}
+            <div
+              className="menu-overlay-enter fixed inset-0 z-30 md:hidden bg-black/30 backdrop-blur-sm"
+              onClick={() => setIsMobileMenuOpen(false)}
+              aria-hidden="true"
+            />
+            {/* Mobile menu */}
+            <div id="mobile-menu" role="navigation" aria-label="Điều hướng chính" className="mobile-menu-enter md:hidden fixed inset-x-0 top-18 z-40 border-b border-(--surface-border) bg-(--surface-solid) backdrop-blur-md space-y-4 py-4 px-2 max-h-[calc(100vh-72px)] overflow-y-auto">
+              <div className="space-y-2 rounded-2xl border border-(--surface-border) bg-(--surface-soft) p-3">
+                <label className="block text-xs uppercase tracking-[0.22em] font-semibold text-(--surface-muted) px-2">Điều hướng</label>
+                <Link href="/" className="menu-item block rounded-2xl px-4 py-3 text-(--page-fg) transition hover:bg-(--surface-soft)" onClick={() => setIsMobileMenuOpen(false)}>
+                  Trang Chủ
+                </Link>
+                <Link href="/blog" className="menu-item block rounded-2xl px-4 py-3 text-(--page-fg) transition hover:bg-(--surface-soft)" onClick={() => setIsMobileMenuOpen(false)}>
+                  Blog
+                </Link>
+                <Link href="/portfolio" className="menu-item block rounded-2xl px-4 py-3 text-(--page-fg) transition hover:bg-(--surface-soft)" onClick={() => setIsMobileMenuOpen(false)}>
+                  Portfolio
+                </Link>
+                <button
+                  type="button"
+                  onClick={() => applyTheme(theme === 'dark' ? 'light' : 'dark')}
+                  className="w-full rounded-2xl px-4 py-3 text-left text-(--page-fg) transition hover:bg-(--surface-soft)"
+                >
+                  {theme === 'dark' ? '☀️ Chuyển sang giao diện sáng' : '🌙 Chuyển sang giao diện tối'}
+                </button>
 
-              {isAuthenticated ? (
-                <div className="space-y-3 border-t border-(--surface-border) pt-3">
-                  <p className="px-4 text-sm text-(--surface-muted)">{user?.email}</p>
-                  <Link
-                    href="/dashboard"
-                    className="block rounded-2xl bg-blue-600 px-4 py-3 text-center font-semibold text-white"
-                    onClick={() => setIsMobileMenuOpen(false)}
-                  >
-                    Dashboard
-                  </Link>
-                  <button
-                    onClick={handleLogout}
-                    disabled={isLoading}
-                    className="w-full rounded-2xl border border-[var(--surface-border)] px-4 py-3 text-[var(--page-fg)] disabled:opacity-50"
-                  >
-                    {isLoading ? 'Đang thoát...' : 'Đăng Xuất'}
-                  </button>
-                </div>
-              ) : (
-                <div className="space-y-3 border-t border-[var(--surface-border)] pt-3">
-                  <Link
-                    href="/login"
-                    className="block rounded-2xl border border-[var(--surface-border)] px-4 py-3 text-center font-medium text-[var(--page-fg)]"
-                    onClick={() => setIsMobileMenuOpen(false)}
-                  >
-                    Đăng Nhập
-                  </Link>
-                  <Link
-                    href="/register"
-                    className="block rounded-2xl bg-blue-600 px-4 py-3 text-center font-semibold text-white"
-                    onClick={() => setIsMobileMenuOpen(false)}
-                  >
-                    Đăng Ký
-                  </Link>
-                </div>
-              )}
+                {isAuthenticated ? (
+                  <div className="space-y-3 border-t border-(--surface-border) pt-3">
+                    <p className="px-4 text-sm text-(--surface-muted)">{user?.email}</p>
+                    <Link
+                      href="/dashboard"
+                      className="block rounded-2xl bg-gradient-to-r from-blue-600 to-blue-700 px-4 py-3 text-center font-semibold text-white hover:shadow-lg hover:-translate-y-0.5 transition"
+                      onClick={() => setIsMobileMenuOpen(false)}
+                    >
+                      Dashboard
+                    </Link>
+                    <button
+                      onClick={handleLogout}
+                      disabled={isLoading}
+                      className="w-full rounded-2xl border border-[var(--surface-border)] px-4 py-3 text-[var(--page-fg)] disabled:opacity-50 transition hover:bg-red-50 dark:hover:bg-red-950"
+                    >
+                      {isLoading ? 'Đang thoát...' : 'Đăng Xuất'}
+                    </button>
+                  </div>
+                ) : (
+                  <div className="space-y-3 border-t border-[var(--surface-border)] pt-3">
+                    <Link
+                      href="/login"
+                      className="block rounded-2xl border border-[var(--surface-border)] px-4 py-3 text-center font-medium text-[var(--page-fg)] hover:bg-(--surface-soft) transition"
+                      onClick={() => setIsMobileMenuOpen(false)}
+                    >
+                      Đăng Nhập
+                    </Link>
+                    <Link
+                      href="/register"
+                      className="block rounded-2xl bg-gradient-to-r from-blue-600 to-blue-700 px-4 py-3 text-center font-semibold text-white hover:shadow-lg hover:-translate-y-0.5 transition"
+                      onClick={() => setIsMobileMenuOpen(false)}
+                    >
+                      Đăng Ký
+                    </Link>
+                  </div>
+                )}
+              </div>
             </div>
-          </div>
+          </>
         )}
 
         {isSearchOpen && (
