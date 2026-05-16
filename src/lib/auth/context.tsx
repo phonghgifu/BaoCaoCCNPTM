@@ -14,11 +14,27 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     isAuthenticated: false,
   })
 
-  const supabase = createClient()
-
   useEffect(() => {
+    let supabase: ReturnType<typeof createClient> | null = null
+
+    try {
+      supabase = createClient()
+    } catch (error) {
+      // If Supabase client fails to initialize (e.g., missing env vars during build)
+      // we just disable auth
+      console.warn('Supabase client not initialized:', error)
+      setAuthSession({
+        user: null,
+        isLoading: false,
+        isAuthenticated: false,
+      })
+      return
+    }
+
     // Lấy session hiện tại
     const getInitialSession = async () => {
+      if (!supabase) return
+
       try {
         const {
           data: { session },
@@ -42,20 +58,24 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     getInitialSession()
 
     // Lắng nghe thay đổi auth state
-    const {
-      data: { subscription },
-    } = supabase.auth.onAuthStateChange((_event, session) => {
-      setAuthSession({
-        user: session?.user as User | null,
-        isLoading: false,
-        isAuthenticated: !!session,
+    try {
+      const {
+        data: { subscription },
+      } = supabase.auth.onAuthStateChange((_event, session) => {
+        setAuthSession({
+          user: session?.user as User | null,
+          isLoading: false,
+          isAuthenticated: !!session,
+        })
       })
-    })
 
-    return () => {
-      subscription?.unsubscribe()
+      return () => {
+        subscription?.unsubscribe()
+      }
+    } catch (error) {
+      console.warn('Failed to subscribe to auth changes:', error)
     }
-  }, [supabase])
+  }, [])
 
   return (
     <AuthContext.Provider value={authSession}>
