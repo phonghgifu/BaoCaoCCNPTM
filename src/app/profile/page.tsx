@@ -41,9 +41,9 @@ export default async function ProfilePage() {
   }
 
   const posts = ownedPosts || []
-  const publishedCount = posts.filter((post) => post.status === 'published').length
-  const draftCount = posts.filter((post) => post.status === 'draft').length
-  const latestPosts = posts.slice(0, 3)
+  const publishedCount = posts.filter((post: any) => post.status === 'published').length
+  const draftCount = posts.filter((post: any) => post.status === 'draft').length
+  const latestPosts = (posts as any[]).slice(0, 3)
 
   return (
     <main className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 py-12">

@@ -231,7 +231,7 @@ export default async function BlogPage({ searchParams }: BlogPageProps) {
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
             {[
               { icon: '📝', label: 'Tổng bài viết', value: totalCount },
-              { icon: '📄', label: 'Hiển thị trong trang', value: hasResults ? posts.length : 0 },
+              { icon: '📄', label: 'Hiển thị trong trang', value: (posts?.length ?? 0) },
               { icon: '📍', label: 'Trang hiện tại', value: page },
               { icon: '🏷️', label: 'Chủ đề nổi bật', value: spotlightTags.length },
             ].map((stat) => (
@@ -327,7 +327,7 @@ export default async function BlogPage({ searchParams }: BlogPageProps) {
 
               {/* Posts Grid */}
               <div className="grid gap-6 md:grid-cols-2">
-                {posts.map((post) => (
+                {(posts ?? []).map((post) => (
                   <article
                     key={post.id}
                     className="group overflow-hidden rounded-3xl border border-gray-200 bg-white shadow-lg transition hover:-translate-y-1 hover:shadow-2xl hover:border-blue-300"

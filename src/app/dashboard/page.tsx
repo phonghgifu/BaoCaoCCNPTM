@@ -60,14 +60,14 @@ export default async function DashboardPage() {
   }
 
   const ownedPosts = posts || []
-  const publishedCount = ownedPosts.filter((post) => post.status === 'published').length
-  const draftCount = ownedPosts.filter((post) => post.status === 'draft').length
+  const publishedCount = ownedPosts.filter((post: any) => post.status === 'published').length
+  const draftCount = ownedPosts.filter((post: any) => post.status === 'draft').length
   const typedComments = (recentComments || []) as unknown as CommentWithPost[]
   const ownedComments = typedComments.filter((comment) => comment.posts?.[0]?.author_id === user.id)
   const totalComments = ownedComments.length
   const latestActivity = ownedComments.slice(0, 3)
 
-  const categoryHighlights = ownedPosts.reduce<Record<string, number>>((accumulator, post) => {
+  const categoryHighlights = (ownedPosts as any[]).reduce((accumulator: Record<string, number>, post: any) => {
     const category = deriveCategory(post)
     accumulator[category] = (accumulator[category] || 0) + 1
     return accumulator

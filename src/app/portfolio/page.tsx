@@ -27,7 +27,7 @@ export default async function PortfolioPage() {
     .order('created_at', { ascending: false })
     .limit(12)
 
-  const displayedProjects: Project[] = (projects ?? []).map((project) => ({
+  const displayedProjects: Project[] = ((projects ?? []) as any[]).map((project: any) => ({
     id: project.id,
     title: project.title,
     description: project.description ?? '',
