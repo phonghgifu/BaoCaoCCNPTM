@@ -7,7 +7,19 @@
 @layer components {
   /* Glassmorphism effect for navbar */
   .navbar-glass {
-    @apply bg-white/80 dark:bg-slate-900/80 backdrop-blur-md backdrop-saturate-200 border border-white/20 dark:border-slate-700/30;
+    /* Use plain CSS for semi-transparent backgrounds and borders because
+       `@apply` doesn't support slash-notation utilities like `bg-white/80`. */
+    background-color: rgba(255,255,255,0.8);
+    backdrop-filter: blur(8px) saturate(1.2);
+    -webkit-backdrop-filter: blur(8px) saturate(1.2);
+    @apply border;
+    border-color: rgba(255,255,255,0.2);
+  }
+
+  /* Dark-mode variant for navbar glass */
+  .dark .navbar-glass {
+    background-color: rgba(15,23,42,0.8); /* slate-900 ~ #0f172a */
+    border-color: rgba(71,85,105,0.3); /* slate-700 ~ rgba approximation */
   }
 
   /* Mobile menu slide-in animation */
@@ -71,32 +83,41 @@
 
   /* Button hover effects */
   .btn-hover-lift {
-    @apply transition-all duration-300;
+    transition: transform 300ms ease, box-shadow 300ms ease;
   }
 
   .btn-hover-lift:hover {
-    @apply -translate-y-1 shadow-lg;
+    transform: translateY(-0.25rem);
+    box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -4px rgba(0,0,0,0.06);
   }
 
   .btn-hover-glow {
-    @apply transition-all duration-300 relative;
+    position: relative;
+    transition: box-shadow 300ms ease, transform 300ms ease;
   }
 
   .btn-hover-glow:hover {
-    @apply shadow-lg shadow-blue-400/50;
+    box-shadow: 0 10px 15px -3px rgba(96,165,250,0.5), 0 4px 6px -4px rgba(96,165,250,0.4);
   }
 
   /* Smooth menu item transitions */
   .menu-item {
-    @apply transition-all duration-200 relative;
+    position: relative;
+    transition: all 200ms ease;
   }
 
   .menu-item::before {
-    @apply absolute left-0 bottom-0 w-0 h-0.5 bg-blue-600 transition-all duration-300;
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 0;
+    height: 2px;
+    background-color: #2563eb;
+    transition: width 300ms ease;
     content: '';
   }
 
   .menu-item:hover::before {
-    @apply w-full;
+    width: 100%;
   }
 }

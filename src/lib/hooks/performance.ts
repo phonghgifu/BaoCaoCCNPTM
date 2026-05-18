@@ -152,7 +152,7 @@ export const memoComponent = <P extends object>(
  * Request Animation Frame wrapper for smooth animations
  */
 export function useAnimationFrame(callback: (timestamp: DOMHighResTimeStamp) => void) {
-  const frameRef = useRef<number>()
+  const frameRef = useRef<number | null>(null)
 
   useEffect(() => {
     const animate = (timestamp: DOMHighResTimeStamp) => {
@@ -163,7 +163,7 @@ export function useAnimationFrame(callback: (timestamp: DOMHighResTimeStamp) => 
     frameRef.current = requestAnimationFrame(animate)
 
     return () => {
-      if (frameRef.current) {
+      if (frameRef.current != null) {
         cancelAnimationFrame(frameRef.current)
       }
     }

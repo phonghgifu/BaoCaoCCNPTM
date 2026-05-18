@@ -10,8 +10,9 @@ import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { ZodSchema } from 'zod'
 
+// Use `any` for schema to avoid generic incompatibilities between zod and react-hook-form
 interface UseFormValidationOptions<T> {
-  schema: ZodSchema
+  schema: any
   defaultValues?: T
   onSuccess?: (data: T) => void | Promise<void>
 }
@@ -34,8 +35,9 @@ export function useFormValidation<T extends Record<string, any>>({
   const [submitError, setSubmitError] = useState<string | null>(null)
 
   const form = useForm<T>({
-    resolver: zodResolver(schema),
-    defaultValues: (defaultValues || {}) as T,
+    // cast resolver to any to satisfy some generic mismatches between resolver types
+    resolver: zodResolver(schema) as any,
+    defaultValues: (defaultValues || {}) as any,
     mode: 'onBlur', // Validate on blur for better UX
   })
 

@@ -56,8 +56,8 @@ export function SearchComponent() {
           .limit(3)
 
         const results: SearchSuggestion[] = [
-          ...(posts || []).map((p) => ({ ...p, type: 'post' as const })),
-          ...(projects || []).map((p) => ({ ...p, type: 'project' as const })),
+          ...(posts || []).map((p: any) => ({ ...p, type: 'post' as const })),
+          ...(projects || []).map((p: any) => ({ ...p, type: 'project' as const })),
         ]
 
         setSuggestions(results)
