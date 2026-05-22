@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import { useRouter } from 'next/navigation'
 import { Modal } from '@/components/ui/modal'
 import { createClient } from '@/lib/supabase/client'
@@ -50,39 +50,41 @@ export function ProjectCard({ project }: { project: Project }) {
   const [imageUrl, setImageUrl] = useState<string | null>(null)
   const [imageLoaded, setImageLoaded] = useState(false)
 
-  const supabase = createClient()
+  const supabase = useMemo(() => createClient(), [])
   const router = useRouter()
   const { user } = useAuth()
   const detailHref = project.link && project.link !== '#' ? project.link : `/portfolio/${project.id}`
   const isExternalLink = !!project.link && /^https?:\/\//.test(project.link)
 
   useEffect(() => {
-    let mounted = true
+    let active = true
 
     const load = async () => {
       try {
-        const { data: countData, error: countErr } = await supabase
+        const { count, error: countErr } = await supabase
           .from('project_likes')
-          .select('*', { count: 'exact' })
+          .select('id', { count: 'exact', head: true })
           .eq('project_id', project.id)
 
         if (countErr) throw countErr
 
-        if (mounted) setLikeCount(countData?.length || 0)
+        if (active) setLikeCount(count ?? 0)
 
         if (user) {
           const { data: likeData } = await supabase
             .from('project_likes')
-            .select('*')
+            .select('id')
             .eq('project_id', project.id)
             .eq('user_id', user.id)
-            .single()
+            .maybeSingle()
 
-          if (mounted) setIsLiked(!!likeData)
+          if (active) setIsLiked(!!likeData)
+        } else if (active) {
+          setIsLiked(false)
         }
       } catch (err) {
         console.error('Error loading likes:', stringifyError(err))
-        if (mounted) {
+        if (active) {
           setLikeCount(0)
           setIsLiked(false)
         }
@@ -91,19 +93,24 @@ export function ProjectCard({ project }: { project: Project }) {
 
     load()
 
+    return () => {
+      active = false
+    }
+  }, [project.id, user?.id, supabase])
+
+  useEffect(() => {
+    setImageLoaded(false)
+    setImageUrl(null)
+
     if (project.image && project.image.includes('/')) {
       try {
         const url = getPublicUrl(project.image)
-        if (mounted) setImageUrl(url)
+        setImageUrl(url)
       } catch (err) {
         reportError(err, { source: 'ProjectCard.getPublicUrl', projectId: project.id })
       }
     }
-
-    return () => {
-      mounted = false
-    }
-  }, [project.id, project.image, user?.id])
+  }, [project.id, project.image])
 
   const handleLike = async () => {
     if (!user) {

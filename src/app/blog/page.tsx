@@ -38,6 +38,11 @@ export default async function BlogPage({ searchParams }: BlogPageProps) {
   const params = await searchParams
 
   const query = (params.q || '').trim()
+  const safeQuery = query
+    .normalize('NFKC')
+    .replace(/[^\p{L}\p{N}\s-]/gu, ' ')
+    .replace(/\s+/g, ' ')
+    .trim()
   const page = Math.max(1, Number.parseInt(params.page || '1', 10) || 1)
   const sort = params.sort === 'oldest' ? 'oldest' : 'latest'
 
@@ -57,8 +62,8 @@ export default async function BlogPage({ searchParams }: BlogPageProps) {
       `, { count: 'exact' })
       .eq('status', 'published')
 
-    if (query) {
-      request = request.or(`title.ilike.%${query}%,excerpt.ilike.%${query}%,content.ilike.%${query}%`)
+    if (safeQuery) {
+      request = request.or(`title.ilike.%${safeQuery}%,excerpt.ilike.%${safeQuery}%,content.ilike.%${safeQuery}%`)
     }
 
     request = request.order('published_at', { ascending: sort === 'oldest' })
@@ -116,7 +121,7 @@ export default async function BlogPage({ searchParams }: BlogPageProps) {
   return (
     <>
       {/* Header Section */}
-      <section className="relative overflow-hidden bg-gradient-to-br from-blue-50 via-white to-purple-50 py-12 sm:py-16 lg:py-20">
+      <section className="relative overflow-hidden bg-linear-to-br from-blue-50 via-white to-purple-50 py-12 sm:py-16 lg:py-20">
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
           <div className="absolute -top-40 -right-40 w-80 h-80 bg-blue-200 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob" />
           <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-purple-200 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob animation-delay-2000" />
@@ -133,7 +138,7 @@ export default async function BlogPage({ searchParams }: BlogPageProps) {
               <h1 className="text-5xl font-black leading-[1.1] tracking-tight text-gray-900 sm:text-6xl lg:text-7xl">
                 Khám Phá
                 <br />
-                <span className="inline-block bg-gradient-to-r from-blue-600 via-cyan-500 to-purple-600 bg-clip-text text-transparent">
+                <span className="inline-block bg-linear-to-r from-blue-600 via-cyan-500 to-purple-600 bg-clip-text text-transparent">
                   Bài Viết Chuyên Nghiệp
                 </span>
               </h1>
@@ -189,7 +194,7 @@ export default async function BlogPage({ searchParams }: BlogPageProps) {
 
                 <button
                   type="submit"
-                  className="col-span-2 sm:col-span-1 lg:col-span-1 rounded-2xl bg-gradient-to-r from-blue-600 to-blue-700 px-6 py-3 font-bold text-white shadow-lg shadow-blue-200 transition hover:-translate-y-0.5 hover:shadow-xl hover:shadow-blue-300 active:scale-95"
+                  className="col-span-2 sm:col-span-1 lg:col-span-1 rounded-2xl bg-linear-to-r from-blue-600 to-blue-700 px-6 py-3 font-bold text-white shadow-lg shadow-blue-200 transition hover:-translate-y-0.5 hover:shadow-xl hover:shadow-blue-300 active:scale-95"
                 >
                   Tìm kiếm
                 </button>
@@ -260,7 +265,7 @@ export default async function BlogPage({ searchParams }: BlogPageProps) {
                     <Link
                       key={tag}
                       href={`/blog?q=${encodeURIComponent(tag)}`}
-                      className="group inline-flex items-center gap-2 rounded-full border border-gray-200 bg-gradient-to-r from-blue-50/80 to-cyan-50/80 px-4 py-2.5 text-sm font-semibold text-gray-700 transition hover:border-blue-300 hover:bg-blue-50 hover:text-blue-700 hover:shadow-md"
+                      className="group inline-flex items-center gap-2 rounded-full border border-gray-200 bg-linear-to-r from-blue-50/80 to-cyan-50/80 px-4 py-2.5 text-sm font-semibold text-gray-700 transition hover:border-blue-300 hover:bg-blue-50 hover:text-blue-700 hover:shadow-md"
                     >
                       <span>#{tag}</span>
                       <span className="inline-flex h-6 w-6 items-center justify-center rounded-full bg-blue-100 text-xs font-bold text-blue-700">
@@ -282,7 +287,7 @@ export default async function BlogPage({ searchParams }: BlogPageProps) {
               <div className="mt-6 space-y-3">
                 {spotlightAuthors.length > 0 ? (
                   spotlightAuthors.map((author) => (
-                    <div key={author.name} className="flex items-center gap-3 rounded-2xl bg-gradient-to-r from-blue-50/50 to-cyan-50/50 p-4 transition hover:shadow-md">
+                    <div key={author.name} className="flex items-center gap-3 rounded-2xl bg-linear-to-r from-blue-50/50 to-cyan-50/50 p-4 transition hover:shadow-md">
                       <img
                         src={author.avatar}
                         alt={author.name}
@@ -333,7 +338,7 @@ export default async function BlogPage({ searchParams }: BlogPageProps) {
                     className="group overflow-hidden rounded-3xl border border-gray-200 bg-white shadow-lg transition hover:-translate-y-1 hover:shadow-2xl hover:border-blue-300"
                   >
                     {/* Image */}
-                    <div className="relative h-48 overflow-hidden bg-gradient-to-br from-gray-100 to-gray-50">
+                    <div className="relative h-48 overflow-hidden bg-linear-to-br from-gray-100 to-gray-50">
                       {post.image_url ? (
                         <img
                           src={post.image_url}
@@ -342,7 +347,7 @@ export default async function BlogPage({ searchParams }: BlogPageProps) {
                           className="h-full w-full object-cover transition duration-500 group-hover:scale-110"
                         />
                       ) : (
-                        <div className="flex h-full items-center justify-center bg-gradient-to-br from-blue-500 via-cyan-500 to-purple-500 text-5xl opacity-30">
+                        <div className="flex h-full items-center justify-center bg-linear-to-br from-blue-500 via-cyan-500 to-purple-500 text-5xl opacity-30">
                           ✦
                         </div>
                       )}
@@ -422,7 +427,7 @@ export default async function BlogPage({ searchParams }: BlogPageProps) {
                   {page < totalPages && (
                     <Link
                       href={buildPageHref({ q: query || undefined, sort, page: page + 1 })}
-                      className="inline-flex items-center gap-1 rounded-full bg-gradient-to-r from-blue-600 to-blue-700 px-4 py-2 font-semibold text-white transition hover:-translate-y-0.5 hover:shadow-lg active:scale-95"
+                      className="inline-flex items-center gap-1 rounded-full bg-linear-to-r from-blue-600 to-blue-700 px-4 py-2 font-semibold text-white transition hover:-translate-y-0.5 hover:shadow-lg active:scale-95"
                     >
                       Trang sau →
                     </Link>
@@ -431,7 +436,7 @@ export default async function BlogPage({ searchParams }: BlogPageProps) {
               </nav>
             </div>
           ) : (
-            <div className="rounded-3xl border-2 border-dashed border-gray-300 bg-gradient-to-b from-gray-50 to-white py-16 px-6 text-center">
+            <div className="rounded-3xl border-2 border-dashed border-gray-300 bg-linear-to-b from-gray-50 to-white py-16 px-6 text-center">
               <span className="text-6xl">📭</span>
               <h3 className="mt-4 text-2xl font-bold text-gray-900">Không tìm thấy bài viết</h3>
               <p className="mt-2 text-gray-600">
@@ -443,7 +448,7 @@ export default async function BlogPage({ searchParams }: BlogPageProps) {
                     ✕ Xóa tìm kiếm
                   </Link>
                 )}
-                <Link href="/dashboard/new" className="inline-flex rounded-full bg-gradient-to-r from-blue-600 to-blue-700 px-6 py-3 font-semibold text-white transition hover:shadow-lg">
+                <Link href="/dashboard/new" className="inline-flex rounded-full bg-linear-to-r from-blue-600 to-blue-700 px-6 py-3 font-semibold text-white transition hover:shadow-lg">
                   ✍️ Viết Bài
                 </Link>
               </div>

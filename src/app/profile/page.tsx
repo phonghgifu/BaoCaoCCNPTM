@@ -29,7 +29,7 @@ export default async function ProfilePage() {
 
   if (error || !profile) {
     return (
-      <main className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100">
+      <main className="min-h-screen bg-linear-to-br from-slate-50 to-slate-100">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
           <div className="bg-red-50 border border-red-200 text-red-700 p-6 rounded-lg">
             <p className="font-semibold">⚠️ Lỗi</p>
@@ -46,7 +46,7 @@ export default async function ProfilePage() {
   const latestPosts = (posts as any[]).slice(0, 3)
 
   return (
-    <main className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 py-12">
+    <main className="min-h-screen bg-linear-to-br from-slate-50 to-slate-100 py-12">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="mb-8">
@@ -142,9 +142,9 @@ export default async function ProfilePage() {
                 className="group flex gap-4 rounded-2xl border border-gray-100 bg-gray-50 p-4 transition hover:border-blue-200 hover:bg-blue-50/50"
               >
                 {post.image_url ? (
-                  <img src={post.image_url} alt={post.title} className="h-20 w-28 rounded-lg object-cover flex-shrink-0" />
+                  <img src={post.image_url} alt={post.title} className="h-20 w-28 rounded-lg object-cover shrink-0" />
                 ) : (
-                  <div className="h-20 w-28 rounded-lg bg-gradient-to-br from-blue-500 via-cyan-500 to-violet-500 flex-shrink-0" />
+                  <div className="h-20 w-28 rounded-lg bg-linear-to-br from-blue-500 via-cyan-500 to-violet-500 shrink-0" />
                 )}
                 <div className="min-w-0 flex-1">
                   <div className="flex items-center gap-2 text-xs uppercase tracking-wider text-gray-500">

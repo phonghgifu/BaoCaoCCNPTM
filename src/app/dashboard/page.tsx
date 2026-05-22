@@ -35,6 +35,11 @@ export default async function DashboardPage() {
     .eq('author_id', user.id)
     .order('created_at', { ascending: false })
 
+  const { count: commentCount } = await supabase
+    .from('comments')
+    .select('id, posts!inner(author_id)', { count: 'exact', head: true })
+    .eq('posts.author_id', user.id)
+
   const { data: recentComments } = await supabase
     .from('comments')
     .select(`
@@ -52,6 +57,7 @@ export default async function DashboardPage() {
         avatar_url
       )
     `)
+    .eq('posts.author_id', user.id)
     .order('created_at', { ascending: false })
     .limit(12)
 
@@ -63,9 +69,8 @@ export default async function DashboardPage() {
   const publishedCount = ownedPosts.filter((post: any) => post.status === 'published').length
   const draftCount = ownedPosts.filter((post: any) => post.status === 'draft').length
   const typedComments = (recentComments || []) as unknown as CommentWithPost[]
-  const ownedComments = typedComments.filter((comment) => comment.posts?.[0]?.author_id === user.id)
-  const totalComments = ownedComments.length
-  const latestActivity = ownedComments.slice(0, 3)
+  const totalComments = commentCount ?? 0
+  const latestActivity = typedComments.slice(0, 3)
 
   const categoryHighlights = (ownedPosts as any[]).reduce((accumulator: Record<string, number>, post: any) => {
     const category = deriveCategory(post)

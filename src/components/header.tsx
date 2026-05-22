@@ -209,7 +209,7 @@ export function Header() {
                     <p className="px-4 text-sm text-(--surface-muted)">{user?.email}</p>
                     <Link
                       href="/dashboard"
-                      className="block rounded-2xl bg-gradient-to-r from-blue-600 to-blue-700 px-4 py-3 text-center font-semibold text-white hover:shadow-lg hover:-translate-y-0.5 transition"
+                      className="block rounded-2xl bg-linear-to-r from-blue-600 to-blue-700 px-4 py-3 text-center font-semibold text-white hover:shadow-lg hover:-translate-y-0.5 transition"
                       onClick={() => setIsMobileMenuOpen(false)}
                     >
                       Dashboard
@@ -217,23 +217,23 @@ export function Header() {
                     <button
                       onClick={handleLogout}
                       disabled={isLoading}
-                      className="w-full rounded-2xl border border-[var(--surface-border)] px-4 py-3 text-[var(--page-fg)] disabled:opacity-50 transition hover:bg-red-50 dark:hover:bg-red-950"
+                      className="w-full rounded-2xl border border-(--surface-border) px-4 py-3 text-(--page-fg) disabled:opacity-50 transition hover:bg-red-50 dark:hover:bg-red-950"
                     >
                       {isLoading ? 'Đang thoát...' : 'Đăng Xuất'}
                     </button>
                   </div>
                 ) : (
-                  <div className="space-y-3 border-t border-[var(--surface-border)] pt-3">
+                  <div className="space-y-3 border-t border-(--surface-border) pt-3">
                     <Link
                       href="/login"
-                      className="block rounded-2xl border border-[var(--surface-border)] px-4 py-3 text-center font-medium text-[var(--page-fg)] hover:bg-(--surface-soft) transition"
+                      className="block rounded-2xl border border-(--surface-border) px-4 py-3 text-center font-medium text-(--page-fg) hover:bg-(--surface-soft) transition"
                       onClick={() => setIsMobileMenuOpen(false)}
                     >
                       Đăng Nhập
                     </Link>
                     <Link
                       href="/register"
-                      className="block rounded-2xl bg-gradient-to-r from-blue-600 to-blue-700 px-4 py-3 text-center font-semibold text-white hover:shadow-lg hover:-translate-y-0.5 transition"
+                      className="block rounded-2xl bg-linear-to-r from-blue-600 to-blue-700 px-4 py-3 text-center font-semibold text-white hover:shadow-lg hover:-translate-y-0.5 transition"
                       onClick={() => setIsMobileMenuOpen(false)}
                     >
                       Đăng Ký
@@ -247,7 +247,7 @@ export function Header() {
 
         {isSearchOpen && (
           <div className="fixed inset-0 z-50 flex items-start justify-center bg-black/40 p-6 sm:items-center">
-            <div role="dialog" aria-modal="true" aria-label="Tìm kiếm" className="w-full max-w-2xl rounded-2xl bg-[var(--surface-solid)] p-6 shadow-2xl">
+            <div role="dialog" aria-modal="true" aria-label="Tìm kiếm" className="w-full max-w-2xl rounded-2xl bg-(--surface-solid) p-6 shadow-2xl">
               <form onSubmit={handleSearch} className="flex gap-3">
                 <input
                   autoFocus
@@ -256,7 +256,7 @@ export function Header() {
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                   placeholder="Tìm bài viết, dự án, chủ đề..."
-                  className="flex-1 rounded-2xl border border-[var(--surface-border)] bg-[var(--surface-solid)] px-4 py-3 text-sm outline-none focus:border-blue-500"
+                  className="flex-1 rounded-2xl border border-(--surface-border) bg-(--surface-solid) px-4 py-3 text-sm outline-none focus:border-blue-500"
                 />
                 <button type="submit" className="rounded-2xl bg-blue-600 px-4 py-3 text-sm font-semibold text-white transition hover:bg-blue-700">Tìm</button>
                 <button type="button" onClick={() => setIsSearchOpen(false)} aria-label="Đóng tìm kiếm" className="ml-2 rounded-2xl px-4 py-3 text-sm">Đóng</button>

@@ -11,235 +11,108 @@ const posts = [
     title: 'Supabase là gì? Hướng dẫn BaaS mã nguồn mở',
     slug: 'supabase-la-gi-huong-dan-baas-ma-nguon-mo',
     excerpt: 'Supabase là một Backend-as-a-Service mã nguồn mở, được xây dựng trên PostgreSQL. Hãy khám phá các tính năng chính và cách sử dụng.',
-    content: `Supabase là một nền tảng Backend-as-a-Service (BaaS) mã nguồn mở, được xây dựng trên nền tảng PostgreSQL. Nó cung cấp đầy đủ các tính năng cần thiết cho một backend hiện đại, giúp bạn xây dựng ứng dụng nhanh chóng mà không cần quản lý server phức tạp.
+    content: `Supabase là một nền tảng Backend-as-a-Service (BaaS) mã nguồn mở được xây trên PostgreSQL. Điểm mạnh của nó không chỉ nằm ở việc có sẵn database, auth hay storage, mà còn ở chỗ toàn bộ các phần đó được ghép lại theo một mô hình rất dễ phát triển cho ứng dụng web hiện đại.
 
-Các tính năng chính của Supabase:
+1) Supabase giải quyết vấn đề gì?
+- Bạn không phải tự dựng backend từ đầu cho từng tính năng phổ biến
+- Bạn vẫn giữ được lợi thế của PostgreSQL và SQL
+- Bạn có thể tập trung vào product thay vì quản lý infrastructure quá sớm
 
-1. PostgreSQL Database
-- Cơ sở dữ liệu quan hệ mạnh mẽ
-- Hỗ trợ các truy vấn SQL phức tạp
-- Khả năng mở rộng không giới hạn
-- Backup tự động và recovery
+2) Các thành phần chính
+- PostgreSQL Database: lưu dữ liệu quan hệ, hỗ trợ query phức tạp
+- Authentication: email/password, OAuth, magic link, session management
+- Realtime: subscribe dữ liệu thay đổi theo thời gian thực
+- Storage: lưu ảnh, file và tài nguyên tĩnh
+- Edge Functions: chạy logic serverless ở cạnh hệ thống
 
-2. Authentication (Xác thực)
-- Xác thực đa phương thức: email/password, OAuth, Magic Link
-- Quản lý session tự động
-- Mã hóa mật khẩu an toàn
-- Hỗ trợ social login
+3) Khi nào nên dùng Supabase?
+- Khi bạn muốn prototype nhanh nhưng không hy sinh cấu trúc dữ liệu
+- Khi ứng dụng cần auth, upload file và realtime ngay từ đầu
+- Khi team muốn đọc được SQL thay vì phụ thuộc hoàn toàn vào abstraction
 
-3. Realtime (Cập nhật theo thời gian thực)
-- Broadcast thay đổi dữ liệu realtime
-- Presence tracking (theo dõi người dùng online)
-- Collaboration features
-- Subscription-based updates
+4) So sánh tư duy với Firebase
+- Supabase mạnh ở relational data và SQL
+- Firebase mạnh ở tốc độ xây dựng nhưng thiên về NoSQL
+- Supabase phù hợp hơn nếu dữ liệu có quan hệ rõ ràng như blog, dashboard, project, comment
 
-4. Storage (Lưu trữ file)
-- Lưu trữ file và hình ảnh
-- CDN tích hợp để truy cập nhanh
-- Access control với Row Level Security
-- URL công khai cho file
+5) Checklist triển khai thực tế
+- Xác định rõ bảng nào public, bảng nào private
+- Thiết kế RLS ngay từ đầu
+- Dùng index cho các cột hay query
+- Tách logic auth, storage và data access theo module
 
-5. Edge Functions (Serverless)
-- Chạy code JavaScript/TypeScript trên edge
-- Không cần setup server
-- Tự động scaling
-- Kết nối với Supabase database
-
-So sánh Supabase với Firebase:
-
-Điểm giống nhau:
-- Cả hai đều là BaaS
-- Cung cấp authentication, realtime, storage
-- Dễ tích hợp với frontend
-
-Điểm khác biệt chính:
-- Supabase dùng PostgreSQL (SQL), Firebase dùng Firestore (NoSQL)
-- Supabase mã nguồn mở, Firebase là proprietary
-- Supabase cho phép truy vấn SQL phức tạp
-- Supabase có RLS (Row Level Security) tích hợp
-- Firebase có Firestore dengan koleksi nested, Supabase dùng relational schema
-- Supabase rẻ hơn Firebase ở phần lưu trữ dữ liệu lớn
-
-Tại sao chọn Supabase?
-
-✓ Mã nguồn mở - bạn có toàn quyền kiểm soát
-✓ SQL mạnh mẽ - truy vấn dữ liệu phức tạp dễ dàng
-✓ RLS Security - bảo mật ở mức row
-✓ PostgreSQL - đáng tin cậy, được dùng rộng rãi
-✓ Giá rẻ - phù hợp với startup
-✓ Developer-friendly - API rõ ràng, documentation tốt
-
-Kết luận:
-
-Supabase là lựa chọn tuyệt vời cho những developer muốn xây dựng backend mạnh mẽ mà không cần lo lắng về infrastructure. Nếu bạn cần SQL, mã nguồn mở, và giá cả hợp lý, Supabase là giải pháp hoàn hảo.`,
+Kết luận: Supabase phù hợp nhất khi bạn muốn một backend hiện đại nhưng vẫn giữ được kiểm soát về dữ liệu, bảo mật và khả năng mở rộng.` ,
     image_url: 'https://images.pexels.com/photos/3861969/pexels-photo-3861969.jpeg?auto=compress&cs=tinysrgb&w=600'
   },
   {
     title: 'PostgreSQL vs NoSQL: Chọn cơ sở dữ liệu nào?',
     slug: 'postgresql-vs-nosql-chon-co-so-du-lieu-nao',
     excerpt: 'So sánh chi tiết giữa PostgreSQL (SQL) và NoSQL. Hiểu rõ khi nào dùng cái nào để lựa chọn đúng cho dự án của bạn.',
-    content: `Khi xây dựng ứng dụng, một trong những quyết định quan trọng nhất là lựa chọn cơ sở dữ liệu. PostgreSQL (SQL) và NoSQL đều có ưu và nhược điểm riêng.
+    content: `Khi chọn cơ sở dữ liệu, câu hỏi đúng không phải là “SQL hay NoSQL tốt hơn”, mà là “mô hình dữ liệu nào phù hợp nhất với bài toán của tôi”.
 
-PostgreSQL (Relational Database - SQL):
+  1) PostgreSQL phù hợp khi nào?
+  - Dữ liệu có quan hệ rõ ràng: users, posts, comments, orders
+  - Cần transaction và tính toàn vẹn cao
+  - Cần query tổng hợp, filter, join, báo cáo
 
-Ưu điểm:
-- ACID compliance - đảm bảo tính toàn vẹn dữ liệu
-- SQL query language - mạnh mẽ, dễ học
-- JOIN tables - kết hợp dữ liệu từ nhiều bảng
-- Relationship management - quản lý quan hệ giữa các entity
-- Mature ecosystem - công cụ, tài liệu rất nhiều
-- Transaction support - giao dịch an toàn
+  2) NoSQL phù hợp khi nào?
+  - Dữ liệu linh hoạt và thay đổi schema thường xuyên
+  - Dữ liệu lồng nhau hoặc document-based
+  - Ưu tiên scale ngang và ghi nhanh
 
-Nhược điểm:
-- Schema rigid - phải định nghĩa structure trước
-- Vertical scaling - khó mở rộng ngang (horizontal)
-- Phức tạp với dữ liệu không cấu trúc
+  3) Trade-off cần hiểu
+  - PostgreSQL chặt chẽ hơn, nên dữ liệu sạch và query phức tạp mạnh
+  - NoSQL linh hoạt hơn, nhưng dễ làm dữ liệu trùng lặp và logic phân tán
 
-NoSQL (Document/Key-Value Databases):
+  4) Cách chọn thực tế
+  - Blog, dashboard, ecommerce nhỏ và vừa: PostgreSQL thường hợp hơn
+  - Chat, log, event stream hoặc dữ liệu biến động cao: NoSQL có thể hợp hơn
+  - Nhiều hệ thống dùng kết hợp: PostgreSQL cho core data, Redis hoặc MongoDB cho nhu cầu riêng
 
-Ưu điểm:
-- Flexible schema - thay đổi structure dễ dàng
-- Horizontal scaling - mở rộng ngang dễ
-- Tốc độ nhanh với dữ liệu đơn giản
-- Lưu dữ liệu không cấu trúc tốt
-- Nested data support - lưu trữ object phức tạp
+  5) Checklist trước khi quyết định
+  - Dữ liệu của bạn có quan hệ chặt không?
+  - Bạn cần transaction mức nào?
+  - Schema có thay đổi liên tục không?
+  - Team của bạn mạnh về SQL hay document store hơn?
 
-Nhược điểm:
-- Không có JOIN - khó kết hợp dữ liệu
-- Consistency issues - eventual consistency
-- Không có ACID transactions
-- Data duplication - dữ liệu trùng lặp
-
-So sánh chi tiết:
-
-Dữ liệu cấu trúc (Structured):
-→ PostgreSQL tốt hơn (user profiles, products, orders)
-
-Dữ liệu lồng nhau (Nested):
-→ NoSQL tốt hơn (JSON documents, logs)
-
-Truy vấn phức tạp:
-→ PostgreSQL (JOIN, aggregation)
-
-Tốc độ ghi dữ liệu:
-→ NoSQL nhanh hơn
-
-Mở rộng:
-→ NoSQL dễ mở rộng ngang (horizontal)
-
-Khi nào dùng PostgreSQL:
-
-✓ E-commerce: users, products, orders - cần relational
-✓ CRM: contacts, deals, pipelines - cần relationship
-✓ Blog/News: articles, authors, comments - cần JOIN
-✓ Banking: transactions cần ACID compliance
-✓ Complex queries: reports, analytics
-
-Khi nào dùng NoSQL:
-
-✓ Real-time analytics: huge volume data
-✓ Chat apps: unstructured messages
-✓ Social media: flexible profile data
-✓ IoT: sensor data, logs
-✓ Content management: flexible documents
-
-Kết luận:
-
-Không có cơ sở dữ liệu hoàn hảo. PostgreSQL tốt cho ứng dụng business logic phức tạp, NoSQL tốt cho scale lớn với dữ liệu đơn giản. Nhiều startup ngày nay dùng cả hai (PostgreSQL + Redis/MongoDB) cho trường hợp sử dụng khác nhau.`,
+  Kết luận: chọn database tốt là chọn theo bản chất dữ liệu và nhu cầu phát triển dài hạn, không phải chạy theo xu hướng.` ,
     image_url: 'https://images.pexels.com/photos/7974/pexels-photo.jpg?auto=compress&cs=tinysrgb&w=600'
   },
   {
     title: 'Authentication là gì? Cách bảo mật người dùng trong ứng dụng',
     slug: 'authentication-la-gi-cach-bao-mat-nguoi-dung',
     excerpt: 'Hiểu rõ về Authentication (xác thực) và Authorization (phân quyền). Cách triển khai một hệ thống login an toàn.',
-    content: `Authentication (Xác thực) là quá trình xác minh danh tính của người dùng. Nó trả lời câu hỏi: "Bạn là ai?"
+    content: `Authentication là quá trình xác minh danh tính người dùng. Authorization là quá trình quyết định họ được làm gì sau khi đã xác thực. Hai khái niệm này thường bị nhầm lẫn nhưng lại phục vụ hai tầng hoàn toàn khác nhau của bảo mật.
 
-Authorization (Phân quyền) là quá trình quyết định quyền hạn của người dùng đã được xác thực. Nó trả lời câu hỏi: "Bạn có quyền làm gì?"
+  1) Các cách xác thực phổ biến
+  - Email/password: dễ triển khai, phù hợp đa số ứng dụng
+  - Magic link: giảm gánh nặng nhớ mật khẩu
+  - OAuth: tận dụng danh tính từ bên thứ ba
+  - 2FA: tăng độ an toàn bằng lớp xác thực thứ hai
 
-Các phương pháp Authentication:
+  2) Bảo mật mật khẩu đúng cách
+  - Không lưu plain text
+  - Dùng hash mạnh như bcrypt hoặc argon2
+  - Có salt và tốc độ hash đủ chậm để chống brute force
 
-1. Email/Password
-- Người dùng đăng ký với email và password
-- Server hash mật khẩu (bcrypt, argon2)
-- Kiểm tra khi đăng nhập
-- Đơn giản nhưng cần mật khẩu mạnh
-- Nguy hiểm nếu user dùng lại mật khẩu
+  3) JWT vs session
+  - JWT phù hợp khi cần stateless và nhiều client
+  - Session phù hợp khi cần kiểm soát và revoke dễ hơn
+  - Không có lựa chọn nào tốt tuyệt đối cho mọi hệ thống
 
-2. Magic Link (Email)
-- Gửi link đặc biệt đến email người dùng
-- Click link để đăng nhập (không cần password)
-- An toàn hơn (không lưu password)
-- Cần confirm email
-- Tốc độ đăng nhập chậm (phải check email)
+  4) Rủi ro phổ biến
+  - Brute force nếu không rate limit
+  - Phishing nếu user không kiểm tra domain
+  - MITM nếu không dùng HTTPS
+  - XSS và SQL injection nếu input không được xử lý đúng
 
-3. Two-Factor Authentication (2FA)
-- Yêu cầu 2 bước xác thực
-- Ví dụ: password + OTP (one-time password)
-- OTP có thể từ SMS, email, hoặc authenticator app
-- Rất an toàn nhưng phức tạp hơn
-- Google Authenticator, Authy, ...
+  5) Checklist thiết kế auth
+  - Có step xác thực rõ ràng
+  - Có kiểm tra quyền ở server
+  - Có handling cho expired session/token
+  - Có logging nhưng không lộ dữ liệu nhạy cảm
 
-4. OAuth (Social Login)
-- Đăng nhập bằng Google, Facebook, GitHub, ...
-- Không cần password
-- Người dùng ủy quyền cho app
-- Sử dụng xác thực của bên thứ ba
-- Thuận tiện nhưng phụ thuộc vào third-party
-
-5. Biometric (Sinh trắc)
-- Vân tay (Fingerprint)
-- Nhận diện khuôn mặt (Face Recognition)
-- Rất an toàn và tiện lợi
-- Chủ yếu trên mobile apps
-- Khó implement trên web
-
-Bảo mật Password:
-
-❌ Sai:
-- Lưu password plain text
-- Hash weak (MD5, SHA1)
-- Không salt
-
-✓ Đúng:
-- Dùng bcrypt, argon2, scrypt
-- Tự động add salt
-- Slow hashing (intentional)
-- Minimize password lifetime
-
-JWT Token vs Session:
-
-JWT (JSON Web Token):
-- Token stateless, không cần lưu server
-- Dùng cho API, mobile, microservices
-- Dễ scale (không cần sync session)
-- Có thể revoke khó (cần blacklist)
-
-Session:
-- Lưu session trên server
-- Dùng cho web traditional
-- Cần session store (Redis, database)
-- Revoke dễ (xóa session)
-
-Hacking Common:
-
-1. Brute Force
-→ Giới hạn attempts, rate limiting
-
-2. Phishing
-→ Kiểm tra URL, 2FA
-
-3. Man-in-the-Middle
-→ HTTPS, Secure cookies
-
-4. SQL Injection
-→ Parameterized queries
-
-5. XSS (Cross-Site Scripting)
-→ Sanitize input, CSP headers
-
-Kết luận:
-
-Authentication là nền tảng của bảo mật ứng dụng. Không có cách nào hoàn hảo, hãy mix nhiều phương pháp (password + 2FA, OAuth + JWT) để có hệ thống vừa an toàn vừa user-friendly.`,
+  Kết luận: hệ thống auth tốt là hệ thống cân bằng giữa an toàn, khả dụng và khả năng mở rộng.` ,
     image_url: 'https://images.pexels.com/photos/3807517/pexels-photo-3807517.jpeg?auto=compress&cs=tinysrgb&w=600'
   },
   {

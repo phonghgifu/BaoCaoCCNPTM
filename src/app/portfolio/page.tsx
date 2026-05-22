@@ -23,7 +23,7 @@ export default async function PortfolioPage() {
 
   const { data: projects, error } = await supabase
     .from('projects')
-    .select('id, title, description, technologies, image, link, likes_count')
+    .select('id, title, description, technologies, image, link')
     .order('created_at', { ascending: false })
     .limit(12)
 
@@ -41,7 +41,7 @@ export default async function PortfolioPage() {
   return (
     <>
       {/* Hero Section */}
-      <section className="relative overflow-hidden bg-gradient-to-br from-blue-50 via-white to-purple-50 py-12 sm:py-20 lg:py-28">
+      <section className="relative overflow-hidden bg-linear-to-br from-blue-50 via-white to-purple-50 py-12 sm:py-20 lg:py-28">
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
           <div className="absolute -top-40 -right-40 w-80 h-80 bg-blue-200 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob" />
           <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-purple-200 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob animation-delay-2000" />
@@ -59,7 +59,7 @@ export default async function PortfolioPage() {
               <h1 className="text-5xl font-black leading-[1.1] tracking-tight text-gray-900 sm:text-6xl lg:text-7xl">
                 Khám Phá
                 <br />
-                <span className="inline-block bg-gradient-to-r from-blue-600 via-cyan-500 to-purple-600 bg-clip-text text-transparent">
+                <span className="inline-block bg-linear-to-r from-blue-600 via-cyan-500 to-purple-600 bg-clip-text text-transparent">
                   Những Dự Án Tuyệt Vời
                 </span>
               </h1>
@@ -71,7 +71,7 @@ export default async function PortfolioPage() {
               <div className="flex flex-wrap items-center gap-4 pt-4">
                 <Link
                   href="/dashboard/new"
-                  className="inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-blue-600 to-blue-700 px-8 py-4 font-bold text-white shadow-lg shadow-blue-200 transition hover:shadow-xl hover:-translate-y-0.5"
+                  className="inline-flex items-center gap-2 rounded-full bg-linear-to-r from-blue-600 to-blue-700 px-8 py-4 font-bold text-white shadow-lg shadow-blue-200 transition hover:shadow-xl hover:-translate-y-0.5"
                 >
                   <span>🚀 Chia Sẻ Dự Án</span>
                 </Link>
@@ -130,13 +130,13 @@ export default async function PortfolioPage() {
               }))} />
             </>
           ) : (
-            <div className="rounded-3xl border-2 border-dashed border-gray-300 bg-gradient-to-b from-gray-50 to-white py-16 px-6 text-center">
+            <div className="rounded-3xl border-2 border-dashed border-gray-300 bg-linear-to-b from-gray-50 to-white py-16 px-6 text-center">
               <span className="text-6xl">📭</span>
               <h3 className="mt-4 text-2xl font-bold text-gray-900">Chưa có dự án nào</h3>
               <p className="mt-2 text-gray-600">Hãy chia sẻ dự án đầu tiên của bạn!</p>
               <Link
                 href="/dashboard/new"
-                className="mt-6 inline-flex items-center justify-center rounded-full bg-gradient-to-r from-blue-600 to-blue-700 px-6 py-3 font-bold text-white transition hover:shadow-lg"
+                className="mt-6 inline-flex items-center justify-center rounded-full bg-linear-to-r from-blue-600 to-blue-700 px-6 py-3 font-bold text-white transition hover:shadow-lg"
               >
                 ✍️ Chia Sẻ Dự Án
               </Link>
@@ -148,7 +148,7 @@ export default async function PortfolioPage() {
       {/* Call to Action Section */}
       <section className="section-shell py-10 sm:py-14">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="rounded-3xl bg-gradient-to-r from-blue-600 via-cyan-600 to-purple-600 p-8 sm:p-12 text-white shadow-2xl">
+          <div className="rounded-3xl bg-linear-to-r from-blue-600 via-cyan-600 to-purple-600 p-8 sm:p-12 text-white shadow-2xl">
             <div className="grid gap-8 sm:grid-cols-[1fr_auto] sm:items-center">
               <div>
                 <h2 className="text-3xl font-black sm:text-4xl">Bạn Có Dự Án Tuyệt Vời?</h2>

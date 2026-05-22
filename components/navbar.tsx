@@ -18,20 +18,23 @@ export default function Navbar() {
   }
 
   return (
-    <nav className="bg-white shadow-md">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center h-16">
-          {/* Logo */}
-          <Link href="/" className="flex items-center space-x-2">
-            <span className="text-2xl font-bold text-blue-600">📝</span>
-            <span className="text-xl font-bold text-gray-900">Simple Blog</span>
+    <nav className="border-b border-[var(--surface-border)] bg-[linear-gradient(180deg,rgba(248,250,252,0.92),rgba(241,245,249,0.88))] text-[var(--page-fg)] shadow-[0_10px_30px_rgba(15,23,42,0.05)] backdrop-blur-xl dark:bg-[linear-gradient(180deg,rgba(15,23,42,0.9),rgba(15,23,42,0.72))]">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <div className="flex h-18 items-center justify-between gap-4 py-2">
+          <Link href="/" className="group flex items-center gap-3">
+            <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-linear-to-br from-sky-500 via-blue-600 to-slate-700 text-white shadow-lg shadow-sky-200/50 transition group-hover:-translate-y-0.5 group-hover:scale-105">
+              <span className="text-lg font-bold">B</span>
+            </div>
+            <div>
+              <p className="text-[10px] uppercase tracking-[0.3em] text-slate-500 dark:text-slate-400">Professional Blog</p>
+              <span className="text-lg font-bold text-slate-900 dark:text-slate-100">Skyline Notes</span>
+            </div>
           </Link>
 
-          {/* Navigation Links */}
-          <div className="flex items-center space-x-6">
+          <div className="flex items-center gap-3">
             <Link
               href="/"
-              className="text-gray-600 hover:text-gray-900 transition"
+              className="rounded-full px-4 py-2 text-sm font-medium text-slate-600 transition hover:bg-slate-100 hover:text-slate-900 dark:text-slate-300 dark:hover:bg-slate-800 dark:hover:text-white"
             >
               Trang Chủ
             </Link>
@@ -40,17 +43,17 @@ export default function Navbar() {
               <>
                 <Link
                   href="/dashboard"
-                  className="text-gray-600 hover:text-gray-900 transition"
+                  className="rounded-full px-4 py-2 text-sm font-medium text-slate-600 transition hover:bg-slate-100 hover:text-slate-900 dark:text-slate-300 dark:hover:bg-slate-800 dark:hover:text-white"
                 >
                   Dashboard
                 </Link>
 
-                <div className="flex items-center space-x-4">
-                  <span className="text-sm text-gray-600">{user?.email}</span>
+                <div className="flex items-center gap-3 rounded-2xl border border-[var(--surface-border)] bg-[var(--surface-solid)] px-3 py-2 shadow-sm">
+                  <span className="hidden max-w-44 truncate text-sm text-slate-600 md:inline dark:text-slate-300">{user?.email}</span>
                   <button
                     onClick={handleLogout}
                     disabled={isLoading}
-                    className="bg-red-600 text-white px-4 py-2 rounded-md hover:bg-red-700 transition disabled:bg-gray-400"
+                    className="inline-flex items-center justify-center rounded-full bg-gradient-to-r from-sky-600 to-blue-700 px-4 py-2 text-sm font-semibold text-white shadow-lg shadow-sky-200/40 transition hover:-translate-y-0.5 hover:shadow-xl disabled:cursor-not-allowed disabled:opacity-60"
                   >
                     {isLoading ? '...' : 'Đăng Xuất'}
                   </button>
@@ -59,14 +62,14 @@ export default function Navbar() {
             ) : (
               <>
                 <Link
-                  href="/auth/login"
-                  className="text-gray-600 hover:text-gray-900 transition"
+                  href="/login"
+                  className="rounded-full px-4 py-2 text-sm font-medium text-slate-600 transition hover:bg-slate-100 hover:text-slate-900 dark:text-slate-300 dark:hover:bg-slate-800 dark:hover:text-white"
                 >
                   Đăng Nhập
                 </Link>
                 <Link
-                  href="/auth/register"
-                  className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition"
+                  href="/register"
+                  className="inline-flex items-center justify-center rounded-full bg-gradient-to-r from-sky-600 to-blue-700 px-4 py-2 text-sm font-semibold text-white shadow-lg shadow-sky-200/40 transition hover:-translate-y-0.5 hover:shadow-xl"
                 >
                   Đăng Ký
                 </Link>

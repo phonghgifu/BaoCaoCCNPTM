@@ -52,7 +52,7 @@ export function PostList({ posts }: PostListProps) {
               <Link
                 href={`/posts/${post.slug}`}
                 aria-label={`Xem bài viết ${post.title}`}
-                className="rounded-xl border border-[var(--surface-border)] px-4 py-2 text-sm font-medium text-[var(--page-fg)] transition hover:border-blue-300 hover:text-blue-700"
+                className="rounded-xl border border-(--surface-border) px-4 py-2 text-sm font-medium text-(--page-fg) transition hover:border-blue-300 hover:text-blue-700"
               >
                 Xem
               </Link>

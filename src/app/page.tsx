@@ -98,7 +98,7 @@ export default async function HomePage() {
   const totalEngagement = enrichedPosts.reduce((sum, post) => sum + (post.likes_count ?? 0) + (post.comments_count ?? 0), 0)
   const stats = [
     { label: 'Bài viết', value: enrichedPosts.length.toString(), accent: 'from-blue-600 to-cyan-500', icon: '📝' },
-    { label: 'Chủ đề', value: Math.max(topTopics.length, 1).toString(), accent: 'from-emerald-500 to-teal-500', icon: '🏷️' },
+    { label: 'Chủ đề', value: topTopics.length.toString(), accent: 'from-emerald-500 to-teal-500', icon: '🏷️' },
     { label: 'Tác giả', value: topAuthors.length.toString(), accent: 'from-violet-500 to-fuchsia-500', icon: '✍️' },
   ]
 
