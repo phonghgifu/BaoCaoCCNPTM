@@ -23,8 +23,12 @@ export function Header() {
     const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches
     const initialTheme = storedTheme || (prefersDark ? 'dark' : 'light')
 
-    setTheme(initialTheme)
-    document.documentElement.classList.toggle('dark', initialTheme === 'dark')
+    const rafId = window.requestAnimationFrame(() => {
+      setTheme(initialTheme)
+      document.documentElement.classList.toggle('dark', initialTheme === 'dark')
+    })
+
+    return () => window.cancelAnimationFrame(rafId)
   }, [])
 
   const applyTheme = (nextTheme: 'light' | 'dark') => {
@@ -63,16 +67,16 @@ export function Header() {
   }
 
   return (
-    <header className="sticky top-0 z-50 navbar-glass shadow-[0_10px_40px_rgba(15,23,42,0.04)]">
+    <header className="sticky top-0 z-50 border-b border-white/50 bg-white/70 shadow-[0_14px_40px_rgba(15,23,42,0.06)] backdrop-blur-xl dark:border-slate-800/60 dark:bg-slate-950/60">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="flex h-18 items-center justify-between gap-4 py-2">
           <Link href="/" className="group flex items-center space-x-3">
-            <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-linear-to-br from-blue-600 via-cyan-500 to-emerald-400 text-white shadow-lg shadow-blue-200/40 transition group-hover:-translate-y-0.5 group-hover:scale-105">
+            <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-linear-to-br from-blue-600 via-cyan-500 to-emerald-400 text-white shadow-lg shadow-blue-200/40 ring-1 ring-white/40 transition group-hover:-translate-y-0.5 group-hover:scale-105">
               <span className="font-bold">P</span>
             </div>
             <div className="hidden sm:block">
               <div className="text-[10px] uppercase tracking-[0.28em] text-(--surface-muted)">Professional Blog</div>
-              <span className="text-lg font-bold text-(--page-fg) lg:text-xl">Chia Sẻ Kiến Thức</span>
+              <span className="text-lg font-bold tracking-tight text-(--page-fg) lg:text-xl">Chia Sẻ Kiến Thức</span>
             </div>
           </Link>
 
@@ -84,11 +88,11 @@ export function Header() {
                 onChange={(event) => setSearchTerm(event.target.value)}
                 aria-label="Tìm kiếm nội dung"
                 placeholder="Tìm bài viết, dự án, chủ đề..."
-                className="w-full rounded-2xl border border-(--surface-border) bg-(--surface-solid) px-4 py-3 pr-12 text-sm shadow-sm outline-none transition focus:border-blue-500"
+                className="w-full rounded-2xl border border-(--surface-border) bg-white/90 px-4 py-3 pr-12 text-sm shadow-sm outline-none transition focus:border-blue-500 dark:bg-slate-900/80"
               />
               <span className="pointer-events-none absolute inset-y-0 right-4 flex items-center text-(--surface-muted)">⌘K</span>
             </div>
-            <button type="submit" className="btn btn-primary press-scale">
+            <button type="submit" className="btn btn-primary press-scale shadow-lg shadow-blue-200/40">
               Tìm kiếm
             </button>
           </form>
@@ -107,14 +111,14 @@ export function Header() {
             <button
               type="button"
               onClick={() => applyTheme(theme === 'dark' ? 'light' : 'dark')}
-              className="btn btn-ghost tap-target"
+              className="btn btn-ghost tap-target shadow-sm"
               aria-label="Chuyển giao diện sáng tối"
             >
               {theme === 'dark' ? '☀️ Sáng' : '🌙 Tối'}
             </button>
 
             {isAuthenticated ? (
-              <div className="flex items-center gap-3 rounded-2xl border border-(--surface-border) bg-(--surface-solid) px-3 py-2 shadow-sm">
+              <div className="flex items-center gap-3 rounded-2xl border border-(--surface-border) bg-white/90 px-3 py-2 shadow-sm backdrop-blur-sm dark:bg-slate-900/80">
                 <div className="flex h-8 w-8 items-center justify-center rounded-full bg-blue-100 text-sm font-bold text-blue-700">
                   {user?.email?.[0].toUpperCase()}
                 </div>
@@ -122,7 +126,7 @@ export function Header() {
                   <p className="text-xs text-(--surface-muted)">Đang đăng nhập</p>
                   <p className="max-w-40 truncate text-sm font-semibold text-(--page-fg)">{user?.email}</p>
                 </div>
-                <Link href="/dashboard" className="btn btn-primary">
+                <Link href="/dashboard" className="btn btn-primary shadow-lg shadow-blue-200/40">
                   Dashboard
                 </Link>
                 <button
@@ -134,11 +138,11 @@ export function Header() {
                 </button>
               </div>
             ) : (
-              <div className="flex items-center gap-3 rounded-2xl border border-(--surface-border) bg-(--surface-solid) px-3 py-2 shadow-sm">
+              <div className="flex items-center gap-3 rounded-2xl border border-(--surface-border) bg-white/90 px-3 py-2 shadow-sm backdrop-blur-sm dark:bg-slate-900/80">
                 <Link href="/login" className="btn btn-ghost">
                   Đăng Nhập
                 </Link>
-                <Link href="/register" className="btn btn-primary">
+                <Link href="/register" className="btn btn-primary shadow-lg shadow-blue-200/40">
                   Đăng Ký
                 </Link>
               </div>

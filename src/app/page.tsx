@@ -35,7 +35,11 @@ export default async function HomePage() {
     console.error('Error fetching posts:', error)
   }
 
-  const enrichedPosts: ExtendedPost[] = (posts ?? []).map((post: any) => ({
+  const enrichedPosts: ExtendedPost[] = (posts ?? []).map((post: ContentPost & {
+    profiles?: { display_name?: string | null; avatar_url?: string | null }
+    likes?: { count: number }[]
+    comments?: { count: number }[]
+  }) => ({
     ...post,
     category: deriveCategory(post),
     tags: deriveTags(post),
@@ -95,7 +99,6 @@ export default async function HomePage() {
     .slice(0, 4)
 
   // Calculate statistics
-  const totalEngagement = enrichedPosts.reduce((sum, post) => sum + (post.likes_count ?? 0) + (post.comments_count ?? 0), 0)
   const stats = [
     { label: 'Bài viết', value: enrichedPosts.length.toString(), accent: 'from-blue-600 to-cyan-500', icon: '📝' },
     { label: 'Chủ đề', value: topTopics.length.toString(), accent: 'from-emerald-500 to-teal-500', icon: '🏷️' },
@@ -107,7 +110,7 @@ export default async function HomePage() {
       {/* Hero Section - Enhanced */}
       <section className="relative overflow-hidden">
         {/* Background gradient with animated elements */}
-        <div className="absolute inset-0 bg-gradient-to-br from-blue-50 via-white to-purple-50" />
+        <div className="absolute inset-0 bg-linear-to-br from-blue-50 via-white to-purple-50" />
         <div className="absolute inset-0 overflow-hidden">
           <div className="absolute -top-40 -right-40 w-80 h-80 bg-blue-200 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob" />
           <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-purple-200 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob animation-delay-2000" />
@@ -116,60 +119,131 @@ export default async function HomePage() {
 
         <div className="relative section-shell py-12 sm:py-20 lg:py-28 xl:py-32">
           <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-            <div className="max-w-4xl space-y-8 lg:space-y-10">
-              {/* Hero Label */}
-              <div className="inline-flex items-center rounded-full border border-blue-200/80 bg-white/80 backdrop-blur px-4 py-2 text-xs font-semibold uppercase tracking-widest text-blue-700 shadow-lg shadow-blue-100/50">
-                <span className="mr-2 inline-block h-2 w-2 rounded-full bg-blue-600 animate-pulse" />
-                Sản phẩm mới nhất trong portfolio
-              </div>
+            <div className="grid items-center gap-12 lg:grid-cols-[1.05fr_0.95fr] lg:gap-16">
+              <div className="max-w-3xl space-y-8 lg:space-y-10">
+                {/* Hero Label */}
+                <div className="inline-flex items-center rounded-full border border-blue-200/80 bg-white/80 px-4 py-2 text-xs font-semibold uppercase tracking-widest text-blue-700 shadow-lg shadow-blue-100/50 backdrop-blur">
+                  <span className="mr-2 inline-block h-2 w-2 rounded-full bg-blue-600 animate-pulse" />
+                  Sản phẩm mới nhất trong portfolio
+                </div>
 
-              {/* Main Headline */}
-              <div className="space-y-4">
-                <h1 className="text-5xl font-black leading-[1.1] tracking-tight text-gray-900 sm:text-6xl lg:text-7xl xl:text-8xl">
-                  Blog & Portfolio
-                  <br />
-                  <span className="inline-block bg-gradient-to-r from-blue-600 via-cyan-500 to-purple-600 bg-clip-text text-transparent">
-                    Chuyên Nghiệp
-                  </span>
-                </h1>
-              </div>
+                {/* Main Headline */}
+                <div className="space-y-4">
+                  <h1 className="text-5xl font-black leading-[1.02] tracking-tight text-gray-900 sm:text-6xl lg:text-7xl xl:text-8xl">
+                    Blog & Portfolio
+                    <br />
+                    <span className="inline-block bg-linear-to-r from-blue-600 via-cyan-500 to-purple-600 bg-clip-text text-transparent">
+                      Chuyên Nghiệp
+                    </span>
+                  </h1>
+                </div>
 
-              {/* Subheading */}
-              <p className="max-w-3xl text-lg leading-relaxed text-gray-600 sm:text-xl lg:text-2xl">
-                Nền tảng đầy đủ tính năng để chia sẻ kiến thức, quản lý dự án và xây dựng danh tiếng công nghệ của bạn.
-                <span className="block mt-2 text-sm font-semibold text-blue-600">Được xây dựng với Next.js 16, Supabase và Tailwind CSS.</span>
-              </p>
+                {/* Subheading */}
+                <p className="max-w-2xl text-lg leading-8 text-gray-600 sm:text-xl lg:text-2xl">
+                  Nền tảng đầy đủ tính năng để chia sẻ kiến thức, quản lý dự án và xây dựng danh tiếng công nghệ của bạn.
+                  <span className="mt-2 block text-sm font-semibold text-blue-600">Được xây dựng với Next.js 16, Supabase và Tailwind CSS.</span>
+                </p>
 
-              {/* CTA Buttons */}
-              <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
-                <Link
-                  href="/blog"
-                  className="group inline-flex items-center justify-center gap-2 rounded-full bg-gradient-to-r from-blue-600 to-blue-700 px-8 py-4 font-bold text-white shadow-lg shadow-blue-200 transition hover:shadow-xl hover:shadow-blue-300 hover:scale-105 active:scale-95"
-                >
-                  <span>🚀 Khám Phá Blog</span>
-                </Link>
-                <Link
-                  href="/portfolio"
-                  className="inline-flex items-center justify-center gap-2 rounded-full border-2 border-blue-600 px-8 py-4 font-bold text-blue-600 transition hover:bg-blue-50"
-                >
-                  <span>👀 Portfolio</span>
-                </Link>
-              </div>
-
-              {/* Stats Cards */}
-              <div className="grid grid-cols-3 gap-3 pt-6 sm:gap-4 lg:gap-6">
-                {stats.map((stat) => (
-                  <div
-                    key={stat.label}
-                    className="group rounded-2xl border border-white/80 bg-white/60 backdrop-blur px-4 py-5 sm:px-6 sm:py-7 shadow-lg shadow-blue-100/20 transition hover:shadow-xl hover:border-blue-200/80"
+                {/* CTA Buttons */}
+                <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
+                  <Link
+                    href="/blog"
+                    className="group inline-flex items-center justify-center gap-2 rounded-full bg-linear-to-r from-blue-600 to-cyan-500 px-8 py-4 font-bold text-white shadow-xl shadow-blue-200/60 transition hover:-translate-y-0.5 hover:shadow-2xl hover:shadow-blue-300/40 active:translate-y-0"
                   >
-                    <div className={`inline-flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br ${stat.accent} text-lg font-bold text-white shadow-md`}>
-                      {stat.icon}
+                    <span>🚀 Khám Phá Blog</span>
+                  </Link>
+                  <Link
+                    href="/portfolio"
+                    className="inline-flex items-center justify-center gap-2 rounded-full border border-blue-200 bg-white/80 px-8 py-4 font-bold text-blue-700 shadow-lg shadow-blue-100/30 backdrop-blur transition hover:-translate-y-0.5 hover:border-blue-300 hover:bg-white hover:shadow-xl"
+                  >
+                    <span>👀 Portfolio</span>
+                  </Link>
+                </div>
+
+                {/* Stats Cards */}
+                <div className="grid grid-cols-3 gap-3 pt-6 sm:gap-4 lg:gap-6">
+                  {stats.map((stat) => (
+                    <div
+                      key={stat.label}
+                      className="group rounded-3xl border border-white/80 bg-white/70 px-4 py-5 shadow-lg shadow-blue-100/20 backdrop-blur transition duration-300 hover:-translate-y-1 hover:border-blue-200/80 hover:shadow-2xl hover:shadow-blue-200/30"
+                    >
+                      <div className={`inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-linear-to-br ${stat.accent} text-xl font-bold text-white shadow-lg shadow-black/10 transition group-hover:scale-105`}>
+                        {stat.icon}
+                      </div>
+                      <div className="mt-3 text-xs font-semibold uppercase tracking-[0.2em] text-gray-600">{stat.label}</div>
+                      <div className="mt-2 text-3xl font-black text-gray-900">{stat.value}</div>
                     </div>
-                    <div className="mt-3 text-xs font-semibold uppercase tracking-wide text-gray-600">{stat.label}</div>
-                    <div className="mt-2 text-3xl font-black text-gray-900">{stat.value}</div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Hero Visual */}
+              <div className="relative">
+                <div className="absolute inset-0 -z-10 rounded-4xl bg-linear-to-br from-blue-200/40 via-cyan-100/30 to-purple-200/40 blur-3xl" />
+                <div className="surface-card overflow-hidden border-white/70 bg-white/75 p-4 shadow-[0_24px_80px_rgba(15,23,42,0.12)] backdrop-blur-xl sm:p-5">
+                  <div className="rounded-3xl border border-slate-200/80 bg-slate-950 p-4 text-white shadow-2xl shadow-slate-900/20 sm:p-5">
+                    <div className="flex items-center justify-between border-b border-white/10 pb-4">
+                      <div className="flex items-center gap-2">
+                        <span className="h-3 w-3 rounded-full bg-rose-400" />
+                        <span className="h-3 w-3 rounded-full bg-amber-300" />
+                        <span className="h-3 w-3 rounded-full bg-emerald-400" />
+                      </div>
+                      <span className="rounded-full border border-white/10 bg-white/5 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.22em] text-cyan-100">
+                        Live Preview
+                      </span>
+                    </div>
+
+                    <div className="mt-5 grid gap-4">
+                      <div className="rounded-[1.25rem] border border-white/10 bg-linear-to-br from-blue-500 via-cyan-500 to-purple-500 p-5 shadow-2xl shadow-cyan-500/20">
+                        <p className="text-xs font-semibold uppercase tracking-[0.28em] text-white/80">Dashboard Snapshot</p>
+                        <h3 className="mt-3 text-2xl font-black leading-tight text-white">Nội dung rõ ràng, hierarchy mạnh, đọc nhanh trên mọi thiết bị.</h3>
+                        <div className="mt-5 flex items-center gap-3">
+                          <div className="h-11 w-11 rounded-2xl bg-white/15 backdrop-blur" />
+                          <div className="flex-1 rounded-2xl bg-white/15 px-4 py-3 text-sm text-white/90 backdrop-blur">Tìm bài viết, portfolio, search, dashboard</div>
+                        </div>
+                      </div>
+
+                      <div className="grid gap-4 sm:grid-cols-3">
+                        <div className="rounded-2xl border border-slate-200 bg-slate-900/95 p-4 shadow-lg shadow-slate-900/10">
+                          <p className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-400">Bài viết</p>
+                          <p className="mt-3 text-3xl font-black text-white">52</p>
+                          <p className="mt-1 text-sm text-slate-400">đang hiển thị</p>
+                        </div>
+                        <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-lg shadow-slate-200/40">
+                          <p className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-500">Chủ đề</p>
+                          <p className="mt-3 text-3xl font-black text-slate-900">6</p>
+                          <p className="mt-1 text-sm text-slate-500">đã phân nhóm</p>
+                        </div>
+                        <div className="rounded-2xl border border-slate-200 bg-slate-100 p-4 shadow-lg shadow-slate-200/40">
+                          <p className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-500">Phong cách</p>
+                          <p className="mt-3 text-3xl font-black text-slate-900">SaaS</p>
+                          <p className="mt-1 text-sm text-slate-500">premium</p>
+                        </div>
+                      </div>
+
+                      <div className="rounded-[1.25rem] border border-slate-200 bg-white p-4 shadow-lg shadow-slate-200/40">
+                        <div className="flex items-center justify-between">
+                          <div>
+                            <p className="text-sm font-semibold text-slate-900">Recent article flow</p>
+                            <p className="text-xs text-slate-500">Hero → featured → latest posts</p>
+                          </div>
+                          <span className="rounded-full bg-emerald-100 px-3 py-1 text-xs font-bold text-emerald-700">Balanced</span>
+                        </div>
+                        <div className="mt-4 space-y-3">
+                          <div className="h-2.5 w-full rounded-full bg-slate-100">
+                            <div className="h-2.5 w-11/12 rounded-full bg-linear-to-r from-blue-500 to-cyan-400" />
+                          </div>
+                          <div className="h-2.5 w-full rounded-full bg-slate-100">
+                            <div className="h-2.5 w-4/5 rounded-full bg-linear-to-r from-cyan-500 to-emerald-400" />
+                          </div>
+                          <div className="h-2.5 w-full rounded-full bg-slate-100">
+                            <div className="h-2.5 w-3/5 rounded-full bg-linear-to-r from-purple-500 to-pink-400" />
+                          </div>
+                        </div>
+                      </div>
+                    </div>
                   </div>
-                ))}
+                </div>
               </div>
             </div>
           </div>
@@ -179,7 +253,7 @@ export default async function HomePage() {
       {/* Search Section */}
       <section className="section-shell py-10 sm:py-14">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="rounded-3xl border-2 border-blue-200/50 bg-gradient-to-br from-blue-50/80 to-cyan-50/80 backdrop-blur px-6 py-8 sm:px-8 sm:py-10 shadow-lg shadow-blue-100/30">
+          <div className="rounded-3xl border-2 border-blue-200/50 bg-linear-to-br from-blue-50/80 to-cyan-50/80 backdrop-blur px-6 py-8 sm:px-8 sm:py-10 shadow-lg shadow-blue-100/30">
             <div className="flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
               <div>
                 <h2 className="text-2xl font-black text-gray-900 sm:text-3xl">🔍 Tìm kiếm thông minh</h2>
@@ -215,7 +289,7 @@ export default async function HomePage() {
               <span className="text-sm font-bold uppercase tracking-wider text-gray-600">Bài viết nổi bật</span>
             </div>
 
-            <article className="group overflow-hidden rounded-3xl bg-gradient-to-br from-gray-900 to-gray-800 shadow-2xl transition hover:shadow-3xl">
+            <article className="group overflow-hidden rounded-3xl bg-linear-to-br from-gray-900 to-gray-800 shadow-2xl transition hover:shadow-3xl">
               <div className="grid gap-8 lg:grid-cols-2 lg:items-stretch">
                 {/* Image */}
                 {featuredPost.image_url ? (
@@ -225,10 +299,10 @@ export default async function HomePage() {
                       alt={featuredPost.title || 'Featured Post'}
                       className="h-full w-full object-cover transition duration-500 group-hover:scale-110"
                     />
-                    <div className="absolute inset-0 bg-gradient-to-r from-gray-900 via-transparent to-transparent" />
+                    <div className="absolute inset-0 bg-linear-to-r from-gray-900 via-transparent to-transparent" />
                   </div>
                 ) : (
-                  <div className="flex h-80 items-center justify-center bg-gradient-to-br from-blue-600 via-purple-600 to-pink-600 lg:h-auto">
+                  <div className="flex h-80 items-center justify-center bg-linear-to-br from-blue-600 via-purple-600 to-pink-600 lg:h-auto">
                     <span className="text-8xl opacity-30">✦</span>
                   </div>
                 )}
@@ -281,7 +355,7 @@ export default async function HomePage() {
 
                     <Link
                       href={`/posts/${featuredPost.slug}`}
-                      className="inline-flex items-center justify-center gap-2 rounded-full bg-gradient-to-r from-blue-500 to-cyan-500 px-6 py-3 font-bold text-white transition hover:shadow-lg hover:shadow-cyan-500/50"
+                      className="inline-flex items-center justify-center gap-2 rounded-full bg-linear-to-r from-blue-500 to-cyan-500 px-6 py-3 font-bold text-white transition hover:shadow-lg hover:shadow-cyan-500/50"
                     >
                       Đọc Bài <span>→</span>
                     </Link>
@@ -315,7 +389,7 @@ export default async function HomePage() {
                     <Link
                       key={topic}
                       href={`/search?q=${encodeURIComponent(topic)}`}
-                      className="group inline-flex items-center gap-2 rounded-full border border-gray-200 bg-gradient-to-r from-blue-50/80 to-cyan-50/80 px-4 py-2.5 text-sm font-semibold text-gray-700 transition hover:border-blue-300 hover:bg-blue-50 hover:text-blue-700"
+                      className="group inline-flex items-center gap-2 rounded-full border border-gray-200 bg-linear-to-r from-blue-50/80 to-cyan-50/80 px-4 py-2.5 text-sm font-semibold text-gray-700 transition hover:border-blue-300 hover:bg-blue-50 hover:text-blue-700"
                     >
                       <span className="text-base">🏷️</span>
                       <span>{topic}</span>
@@ -338,7 +412,7 @@ export default async function HomePage() {
               <div className="mt-6 space-y-3">
                 {topAuthors.length > 0 ? (
                   topAuthors.map((author) => (
-                    <div key={author.authorId} className="flex items-center gap-3 rounded-2xl bg-gradient-to-r from-blue-50/50 to-cyan-50/50 p-4 transition hover:shadow-md">
+                    <div key={author.authorId} className="flex items-center gap-3 rounded-2xl bg-linear-to-r from-blue-50/50 to-cyan-50/50 p-4 transition hover:shadow-md">
                       <img
                         src={author.avatar}
                         alt={author.name || 'Author'}
@@ -366,110 +440,165 @@ export default async function HomePage() {
           <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
             <div className="mb-10 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
               <div>
-                <p className="text-sm font-bold uppercase tracking-wider text-blue-600">Bài Viết Gần Đây</p>
+                <p className="text-sm font-bold uppercase tracking-[0.22em] text-blue-600">Bài Viết Gần Đây</p>
                 <h2 className="mt-2 text-3xl font-black text-gray-900 sm:text-4xl">Nội Dung Mới Nhất</h2>
+                <p className="mt-2 max-w-2xl text-sm leading-7 text-gray-600 sm:text-base">
+                  Một luồng bài viết được sắp theo độ nổi bật, giúp người đọc đi từ nội dung quan trọng nhất sang các bài liên quan một cách tự nhiên.
+                </p>
               </div>
-              <Link href="/blog" className="font-bold text-blue-600 transition hover:text-blue-700">
-                Xem Tất Cả →
+              <Link href="/blog" className="inline-flex items-center gap-2 rounded-full border border-blue-200 bg-white px-5 py-3 text-sm font-bold text-blue-700 shadow-sm transition hover:-translate-y-0.5 hover:border-blue-300 hover:shadow-md">
+                Xem Tất Cả <span>→</span>
               </Link>
             </div>
 
-            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-              {restPosts.map((post) => (
-                <article
-                  key={post.id}
-                  className="group overflow-hidden rounded-3xl border border-gray-200 bg-white shadow-lg transition hover:-translate-y-1 hover:shadow-2xl hover:border-blue-300"
-                >
-                  {/* Image */}
-                  <div className="relative h-56 overflow-hidden bg-gradient-to-br from-gray-100 to-gray-50">
-                    {post.image_url ? (
-                      <ImageWithLQIP
-                        src={post.image_url}
-                        alt={post.title || 'Post'}
-                        className="h-full w-full object-cover transition duration-500 group-hover:scale-110"
-                      />
-                    ) : (
-                      <div className="flex h-full items-center justify-center bg-gradient-to-br from-blue-500 via-cyan-500 to-purple-500 text-5xl opacity-30">
-                        ✦
-                      </div>
-                    )}
-                  </div>
-
-                  {/* Content */}
-                  <div className="flex flex-col p-6">
-                    <div className="flex flex-wrap items-center gap-2">
-                      <span className="inline-block rounded-full bg-blue-100 px-3 py-1 text-xs font-bold uppercase text-blue-700 tracking-wide">
-                        {post.category}
-                      </span>
-                      <span className="inline-block rounded-full bg-gray-100 px-3 py-1 text-xs font-semibold text-gray-600">
-                        {post.readTime} min
-                      </span>
-                    </div>
-
-                    <Link href={`/posts/${post.slug}`} className="mt-4 block group/link">
-                      <h3 className="line-clamp-2 text-xl font-bold text-gray-900 transition group-hover/link:text-blue-600">
-                        {post.title}
-                      </h3>
-                    </Link>
-
-                    {post.excerpt && (
-                      <p className="mt-3 line-clamp-2 text-sm leading-6 text-gray-600 flex-1">
-                        {post.excerpt}
-                      </p>
-                    )}
-
-                    {/* Tags */}
-                    <div className="mt-4 flex flex-wrap gap-1.5">
-                      {post.tags.slice(0, 2).map((tag) => (
-                        <span key={tag} className="inline-block rounded-full bg-gray-100 px-2.5 py-1 text-xs font-medium text-gray-700">
-                          #{tag}
-                        </span>
-                      ))}
-                    </div>
-
-                    {/* Author & Engagement */}
-                    <div className="mt-5 flex items-center justify-between border-t border-gray-100 pt-4">
-                      <div className="flex items-center gap-2">
-                        <img
-                          src={
-                            post.profiles?.avatar_url ||
-                            'https://images.pexels.com/photos/220453/pexels-photo-220453.jpeg?auto=compress&cs=tinysrgb&w=150'
-                          }
-                          alt={post.profiles?.display_name || 'Author'}
-                          className="h-8 w-8 rounded-full object-cover"
+            <div className="grid gap-6 lg:grid-cols-[1.15fr_0.85fr]">
+              {restPosts[0] && (
+                <article className="group overflow-hidden rounded-4xl border border-white/70 bg-white shadow-[0_24px_80px_rgba(15,23,42,0.10)] transition hover:-translate-y-1 hover:shadow-[0_28px_100px_rgba(37,99,235,0.14)]">
+                  <div className="grid h-full lg:grid-cols-[0.95fr_1.05fr]">
+                    <div className="relative min-h-72 overflow-hidden bg-linear-to-br from-gray-100 to-gray-50 lg:min-h-full">
+                      {restPosts[0].image_url ? (
+                        <ImageWithLQIP
+                          src={restPosts[0].image_url}
+                          alt={restPosts[0].title || 'Post'}
+                          className="h-full w-full object-cover transition duration-700 group-hover:scale-105"
                         />
-                        <div className="min-w-0">
-                          <p className="truncate text-xs font-semibold text-gray-900">
-                            {post.profiles?.display_name || 'Ẩn danh'}
+                      ) : (
+                        <div className="flex h-full min-h-72 items-center justify-center bg-linear-to-br from-blue-500 via-cyan-500 to-purple-500 text-6xl opacity-30 lg:min-h-full">
+                          ✦
+                        </div>
+                      )}
+
+                      <div className="absolute left-5 top-5 rounded-full bg-slate-950/80 px-3 py-1 text-xs font-bold uppercase tracking-[0.2em] text-white backdrop-blur">
+                        Featured Now
+                      </div>
+                    </div>
+
+                    <div className="flex flex-col justify-between p-6 sm:p-8 lg:p-10">
+                      <div>
+                        <div className="flex flex-wrap items-center gap-2">
+                          <span className="inline-block rounded-full bg-blue-100 px-3 py-1 text-xs font-bold uppercase tracking-wide text-blue-700">
+                            {restPosts[0].category}
+                          </span>
+                          <span className="inline-block rounded-full bg-gray-100 px-3 py-1 text-xs font-semibold text-gray-600">
+                            {restPosts[0].readTime} min
+                          </span>
+                        </div>
+
+                        <Link href={`/posts/${restPosts[0].slug}`} className="mt-5 block group/link">
+                          <h3 className="text-2xl font-black leading-tight text-gray-900 transition group-hover/link:text-blue-600 sm:text-3xl">
+                            {restPosts[0].title}
+                          </h3>
+                        </Link>
+
+                        {restPosts[0].excerpt && (
+                          <p className="mt-4 max-w-xl text-sm leading-7 text-gray-600 sm:text-base">
+                            {restPosts[0].excerpt}
                           </p>
-                          <p className="text-xs text-gray-500">
+                        )}
+
+                        <div className="mt-5 flex flex-wrap gap-2">
+                          {restPosts[0].tags.slice(0, 3).map((tag) => (
+                            <span key={tag} className="inline-block rounded-full bg-slate-100 px-3 py-1 text-xs font-medium text-slate-700">
+                              #{tag}
+                            </span>
+                          ))}
+                        </div>
+                      </div>
+
+                      <div className="mt-8 flex flex-col gap-4 border-t border-slate-100 pt-6 sm:flex-row sm:items-center sm:justify-between">
+                        <div className="flex items-center gap-3">
+                          <img
+                            src={
+                              restPosts[0].profiles?.avatar_url ||
+                              'https://images.pexels.com/photos/220453/pexels-photo-220453.jpeg?auto=compress&cs=tinysrgb&w=150'
+                            }
+                            alt={restPosts[0].profiles?.display_name || 'Author'}
+                            className="h-11 w-11 rounded-2xl object-cover ring-2 ring-blue-100"
+                          />
+                          <div>
+                            <p className="text-sm font-bold text-gray-900">
+                              {restPosts[0].profiles?.display_name || 'Ẩn danh'}
+                            </p>
+                            <p className="text-xs text-gray-500">
+                              {restPosts[0].published_at
+                                ? new Date(restPosts[0].published_at).toLocaleDateString('vi-VN', {
+                                    month: 'short',
+                                    day: 'numeric',
+                                  })
+                                : 'N/A'}
+                            </p>
+                          </div>
+                        </div>
+
+                        <Link
+                          href={`/posts/${restPosts[0].slug}`}
+                          className="inline-flex items-center justify-center gap-2 rounded-full bg-linear-to-r from-blue-600 to-cyan-500 px-5 py-3 text-sm font-bold text-white shadow-lg shadow-cyan-200/50 transition hover:-translate-y-0.5 hover:shadow-xl hover:shadow-cyan-300/50"
+                        >
+                          Đọc Bài <span>→</span>
+                        </Link>
+                      </div>
+                    </div>
+                  </div>
+                </article>
+              )}
+
+              <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-1">
+                {restPosts.slice(1).map((post) => (
+                  <article
+                    key={post.id}
+                    className="group rounded-3xl border border-gray-200 bg-white p-4 shadow-lg transition hover:-translate-y-1 hover:border-blue-300 hover:shadow-2xl"
+                  >
+                    <div className="flex gap-4">
+                      <div className="relative h-24 w-24 shrink-0 overflow-hidden rounded-2xl bg-linear-to-br from-gray-100 to-gray-50">
+                        {post.image_url ? (
+                          <ImageWithLQIP
+                            src={post.image_url}
+                            alt={post.title || 'Post'}
+                            className="h-full w-full object-cover transition duration-500 group-hover:scale-110"
+                          />
+                        ) : (
+                          <div className="flex h-full w-full items-center justify-center bg-linear-to-br from-blue-500 via-cyan-500 to-purple-500 text-3xl opacity-30">
+                            ✦
+                          </div>
+                        )}
+                      </div>
+
+                      <div className="min-w-0 flex-1">
+                        <div className="flex flex-wrap items-center gap-2">
+                          <span className="inline-block rounded-full bg-blue-100 px-2.5 py-1 text-[11px] font-bold uppercase tracking-wide text-blue-700">
+                            {post.category}
+                          </span>
+                          <span className="inline-block rounded-full bg-gray-100 px-2.5 py-1 text-[11px] font-semibold text-gray-600">
+                            {post.readTime} min
+                          </span>
+                        </div>
+
+                        <Link href={`/posts/${post.slug}`} className="mt-3 block">
+                          <h3 className="line-clamp-2 text-lg font-black leading-snug text-gray-900 transition group-hover:text-blue-600">
+                            {post.title}
+                          </h3>
+                        </Link>
+
+                        <p className="mt-2 line-clamp-2 text-sm leading-6 text-gray-600">
+                          {post.excerpt}
+                        </p>
+
+                        <div className="mt-3 flex items-center justify-between gap-3 text-xs text-gray-500">
+                          <span>
                             {post.published_at
                               ? new Date(post.published_at).toLocaleDateString('vi-VN', {
                                   month: 'short',
                                   day: 'numeric',
                                 })
                               : 'N/A'}
-                          </p>
+                          </span>
+                          <span className="inline-flex items-center gap-1 text-blue-700 font-semibold">Đọc thêm →</span>
                         </div>
                       </div>
-
-                      {/* Engagement Stats */}
-                      <div className="flex items-center gap-3 text-xs text-gray-600">
-                        {(post.likes_count ?? 0) > 0 && (
-                          <span className="inline-flex items-center gap-1">
-                            👍 {post.likes_count}
-                          </span>
-                        )}
-                        {(post.comments_count ?? 0) > 0 && (
-                          <span className="inline-flex items-center gap-1">
-                            💬 {post.comments_count}
-                          </span>
-                        )}
-                      </div>
                     </div>
-                  </div>
-                </article>
-              ))}
+                  </article>
+                ))}
+              </div>
             </div>
           </div>
         </section>
@@ -479,13 +608,13 @@ export default async function HomePage() {
       {enrichedPosts.length === 0 && (
         <section className="section-shell py-20">
           <div className="mx-auto max-w-2xl px-4 sm:px-6 lg:px-8">
-            <div className="rounded-3xl border-2 border-dashed border-gray-300 bg-gradient-to-b from-gray-50 to-white py-16 px-6 text-center sm:px-8">
+            <div className="rounded-3xl border-2 border-dashed border-gray-300 bg-linear-to-b from-gray-50 to-white py-16 px-6 text-center sm:px-8">
               <span className="text-6xl">📝</span>
               <h3 className="mt-4 text-2xl font-bold text-gray-900">Chưa có bài viết nào</h3>
               <p className="mt-2 text-gray-600">Hãy viết bài viết đầu tiên của bạn để chia sẻ kiến thức!</p>
               <Link
                 href="/dashboard/new"
-                className="mt-6 inline-flex items-center justify-center rounded-full bg-gradient-to-r from-blue-600 to-blue-700 px-6 py-3 font-bold text-white transition hover:shadow-lg"
+                className="mt-6 inline-flex items-center justify-center rounded-full bg-linear-to-r from-blue-600 to-blue-700 px-6 py-3 font-bold text-white transition hover:shadow-lg"
               >
                 ✍️ Viết Bài Đầu Tiên
               </Link>
@@ -497,7 +626,7 @@ export default async function HomePage() {
       {/* CTA Section */}
       <section className="section-shell py-10 sm:py-14">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="rounded-3xl bg-gradient-to-r from-blue-600 via-cyan-600 to-purple-600 p-8 sm:p-12 text-white shadow-2xl">
+          <div className="rounded-3xl bg-linear-to-r from-blue-600 via-cyan-600 to-purple-600 p-8 sm:p-12 text-white shadow-2xl">
             <div className="grid gap-8 sm:grid-cols-[1fr_auto] sm:items-center">
               <div>
                 <h2 className="text-3xl font-black sm:text-4xl">Sẵn sàng bắt đầu?</h2>

@@ -38,7 +38,7 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="vi" suppressHydrationWarning>
+    <html lang="vi" suppressHydrationWarning data-scroll-behavior="smooth">
       <body className={plusJakartaSans.className}>
         <AuthProvider>
           <a href="#content" className="skip-link sr-only">Bỏ qua tới nội dung</a>
