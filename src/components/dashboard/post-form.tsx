@@ -2,9 +2,11 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
+import Image from 'next/image'
 import { createClient } from '@/lib/supabase/client'
 import { Post, PostStatus } from '@/types/database'
 import { ImageUpload } from '@/components/posts/image-upload'
+import { savePost } from '@/services/posts.service'
 
 interface PostFormProps {
   post?: Post
@@ -29,55 +31,18 @@ export function PostForm({ post }: PostFormProps) {
     setLoading(true)
 
     try {
-      const { data: { user } } = await supabase.auth.getUser()
-
-      if (!user) {
-        setError('Bạn cần đăng nhập để thực hiện thao tác này')
-        return
-      }
-
-      // Generate slug từ title
-      const generateSlug = (text: string) => {
-        return text
-          .toLowerCase()
-          .trim()
-          .replace(/[^\w\s-]/g, '')
-          .replace(/\s+/g, '-')
-          .replace(/-+/g, '-')
-      }
-
-      const postData = {
+      await savePost(supabase, {
         title,
-        slug: generateSlug(title),
         content,
         image_url: imageUrl || null,
         excerpt,
         status,
-        author_id: user.id,
-        published_at: status === 'published' ? new Date().toISOString() : null,
-      }
-
-      if (isEditing) {
-        // Update existing post
-        const { error } = await supabase
-          .from('posts')
-          .update(postData)
-          .eq('id', post!.id)
-
-        if (error) throw error
-      } else {
-        // Create new post
-        const { error } = await supabase
-          .from('posts')
-          .insert(postData)
-
-        if (error) throw error
-      }
+      }, post?.id)
 
       router.push('/dashboard')
       router.refresh()
-    } catch (err: any) {
-      setError(err.message || 'Có lỗi xảy ra. Vui lòng thử lại.')
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : 'Có lỗi xảy ra. Vui lòng thử lại.')
     } finally {
       setLoading(false)
     }
@@ -121,15 +86,24 @@ export function PostForm({ post }: PostFormProps) {
       </div>
 
       <div>
-        <ImageUpload onImageUploaded={setImageUrl} disabled={loading} />
+        <ImageUpload
+          kind="thumbnail"
+          label="Thumbnail bài viết"
+          description="Upload thumbnail cho bài viết từ Supabase Storage."
+          onImageUploaded={setImageUrl}
+          disabled={loading}
+        />
       </div>
 
       {imageUrl && (
         <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4 shadow-sm dark:border-slate-700 dark:bg-slate-900/40">
           <p className="mb-2 text-sm font-medium text-slate-700 dark:text-slate-200">Hình ảnh đã chọn:</p>
-          <img
+          <Image
             src={imageUrl}
             alt="Post image"
+            width={640}
+            height={360}
+            unoptimized
             className="max-w-xs h-auto rounded-2xl border border-slate-200 shadow-sm"
           />
         </div>

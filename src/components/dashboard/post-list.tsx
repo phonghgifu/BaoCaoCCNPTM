@@ -2,12 +2,21 @@ import Link from 'next/link'
 import { Post } from '@/types/database'
 import { DeletePostButton } from './delete-post-button'
 import { deriveCategory, estimateReadTime } from '@/lib/content'
+import type { UserRole } from '@/types/database'
 
 interface PostListProps {
   posts: Post[]
+  viewerId?: string
+  viewerRole?: UserRole
 }
 
-export function PostList({ posts }: PostListProps) {
+function canManageAllPosts(role?: UserRole) {
+  return role === 'admin' || role === 'editor'
+}
+
+export function PostList({ posts, viewerId, viewerRole }: PostListProps) {
+  const elevated = canManageAllPosts(viewerRole)
+
   return (
     <div className="space-y-4">
       {posts.map((post) => (
@@ -56,14 +65,18 @@ export function PostList({ posts }: PostListProps) {
               >
                 Xem
               </Link>
-              <Link
-                href={`/dashboard/edit/${post.id}`}
-                aria-label={`Sửa bài viết ${post.title}`}
-                className="rounded-xl bg-blue-600 px-4 py-2 text-sm font-semibold text-white transition hover:-translate-y-0.5 hover:bg-blue-700"
-              >
-                Sửa
-              </Link>
-              <DeletePostButton postId={post.id} postTitle={post.title} />
+              {(elevated || viewerId === post.author_id) && (
+                <>
+                  <Link
+                    href={`/dashboard/edit/${post.id}`}
+                    aria-label={`Sửa bài viết ${post.title}`}
+                    className="rounded-xl bg-blue-600 px-4 py-2 text-sm font-semibold text-white transition hover:-translate-y-0.5 hover:bg-blue-700"
+                  >
+                    Sửa
+                  </Link>
+                  <DeletePostButton postId={post.id} postTitle={post.title} />
+                </>
+              )}
             </div>
           </div>
         </div>

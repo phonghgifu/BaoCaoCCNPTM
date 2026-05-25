@@ -1,4 +1,10 @@
-## 🎉 PHẦN 2-4 HOÀN THÀNH!
+## 🎉 PHẦN 2-5 HOÀN THÀNH!
+
+### 🧭 Tóm tắt dự án
+- **Đây là web gì:** Một website blog/chia sẻ kiến thức chuyên nghiệp, có trang chủ, bài viết, dashboard và phần xác thực người dùng.
+- **Công dụng:** Dùng để đăng bài, xem bài viết, quản lý nội dung và phân quyền truy cập cho người dùng đăng nhập.
+- **Giao diện:** Thiết kế hiện đại, bố cục rõ ràng, màu sáng sạch sẽ, có navbar, thẻ nội dung, trang đăng nhập và trang quản trị.
+- **Tính năng chính:** Đăng ký/đăng nhập, xem bài viết, bảo vệ route dashboard, CRUD bài viết qua service layer, role admin/editor/user, và upload ảnh bằng Supabase Storage.
 
 ### ✅ Những Gì Đã Tạo Xong
 
@@ -31,9 +37,14 @@
 3. **app/dashboard/** - Protected Routes
    - ✅ page.tsx - User dashboard (protected)
    - ✅ layout.tsx - Route protection logic
+   - ✅ admin/users/page.tsx - Admin quản trị role người dùng
 
 4. **components/** - UI Components
    - ✅ navbar.tsx - Navigation with auth state
+   - ✅ admin/user-role-manager.tsx - Đổi role user trong dashboard admin
+
+5. **lib/supabase/** - Storage helpers
+   - ✅ storage.ts - Upload avatar và thumbnail chuẩn Supabase Storage
 
 #### 📄 Documentation Files
 - ✅ QUICK_START.md - 🔥 Start here!
@@ -102,19 +113,16 @@ simple-blog/
 | 2 | Database Schema | ✅ 100% (Ready) |
 | 3 | Row Level Security | ✅ 100% (Ready) |
 | 4 | Authentication | ✅ 100% |
-| 5 | CRUD Operations | 📋 Next |
+| 5 | CRUD Operations + Role Management | ✅ 100% |
 
 ---
 
 ### 🚀 Next Phase Preview (Phase 5)
 
-When database & auth are tested, we'll add:
-- Post creation (Create)
-- Post listing (Read)
-- Post editing (Update)
-- Post deletion (Delete)
+CRUD, phân quyền role và upload ảnh đã có sẵn. Các hướng mở rộng hợp lý tiếp theo là:
 - Comments section
-- User profiles
+- Moderation/admin workflows nâng cao
+- Upload tối ưu hóa ảnh và xử lý preview
 
 ---
 

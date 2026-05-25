@@ -1,3 +1,5 @@
+import type { UserRole } from '@/types/database'
+
 // Auth types and interfaces for TypeScript
 export interface User {
   id: string
@@ -5,6 +7,7 @@ export interface User {
   user_metadata?: {
     display_name?: string
     avatar_url?: string
+    role?: UserRole
   }
 }
 
@@ -18,6 +21,7 @@ export interface SignUpData {
   email: string
   password: string
   display_name?: string
+  role?: UserRole
 }
 
 export interface LoginData {

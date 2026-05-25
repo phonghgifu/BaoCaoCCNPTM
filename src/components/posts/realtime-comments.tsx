@@ -26,7 +26,7 @@ export function RealtimeComments({ postId, initialComments }: RealtimeCommentsPr
           table: 'comments',
           filter: `post_id=eq.${postId}`,
         },
-        async (payload: any) => {
+        async (payload: { new: { id: string } }) => {
           // Fetch the new comment with profile data
           const { data: newComment } = await supabase
             .from('comments')

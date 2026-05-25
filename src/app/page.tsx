@@ -4,6 +4,8 @@ import { Footer } from '@/components/footer'
 import { ImageWithLQIP } from '@/components/image-with-lqip'
 import { deriveCategory, deriveTags, estimateReadTime, type ContentPost } from '@/lib/content'
 
+/* eslint-disable @next/next/no-img-element */
+
 interface ExtendedPost extends ContentPost {
   category: string
   tags: string[]

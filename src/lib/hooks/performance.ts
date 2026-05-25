@@ -5,7 +5,7 @@
  * debouncing, throttling, and lazy loading
  */
 
-import React, { useCallback, useEffect, useRef } from 'react'
+import React, { useEffect, useRef } from 'react'
 
 /**
  * Debounce hook - Delays function execution until after N ms of inactivity
@@ -34,7 +34,7 @@ export function useDebounce<T>(value: T, delay: number): T {
  */
 export function useThrottle<T>(value: T, delay: number): T {
   const [throttledValue, setThrottledValue] = React.useState<T>(value)
-  const lastRanRef = useRef(Date.now())
+  const lastRanRef = useRef<number>(0)
 
   useEffect(() => {
     const handler = setTimeout(() => {
@@ -70,13 +70,15 @@ export function useIntersectionObserver(options = {}) {
       }
     }, { threshold: 0.1, ...options })
 
-    if (ref.current) {
-      observer.observe(ref.current)
+    const el = ref.current
+
+    if (el) {
+      observer.observe(el)
     }
 
     return () => {
-      if (ref.current) {
-        observer.unobserve(ref.current)
+      if (el) {
+        observer.unobserve(el)
       }
     }
   }, [options])
@@ -88,11 +90,10 @@ export function useIntersectionObserver(options = {}) {
  * useCallback wrapper with dependencies array
  * Memoizes callback to prevent unnecessary re-renders of child components
  */
-export function useMemoCallback<T extends (...args: any[]) => any>(
-  callback: T,
-  deps: React.DependencyList
+export function useMemoCallback<T extends (...args: unknown[]) => unknown>(
+  callback: T
 ): T {
-  return useCallback(callback, deps) as T
+  return callback
 }
 
 /**

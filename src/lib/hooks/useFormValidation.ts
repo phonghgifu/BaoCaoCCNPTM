@@ -6,14 +6,12 @@
  */
 
 import { useState } from 'react'
-import { useForm } from 'react-hook-form'
-import { zodResolver } from '@hookform/resolvers/zod'
-import { ZodSchema } from 'zod'
+import { useForm, type DefaultValues, type FieldErrors, type FieldValues, type Resolver } from 'react-hook-form'
+import type { ZodType } from 'zod'
 
-// Use `any` for schema to avoid generic incompatibilities between zod and react-hook-form
-interface UseFormValidationOptions<T> {
-  schema: any
-  defaultValues?: T
+interface UseFormValidationOptions<T extends FieldValues> {
+  schema: ZodType<T>
+  defaultValues?: Partial<T>
   onSuccess?: (data: T) => void | Promise<void>
 }
 
@@ -26,7 +24,7 @@ interface UseFormValidationOptions<T> {
  *   onSuccess: async (data) => { await submitPost(data) }
  * })
  */
-export function useFormValidation<T extends Record<string, any>>({
+export function useFormValidation<T extends FieldValues>({
   schema,
   defaultValues,
   onSuccess,
@@ -34,10 +32,33 @@ export function useFormValidation<T extends Record<string, any>>({
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [submitError, setSubmitError] = useState<string | null>(null)
 
+  const resolver = (async (values: T) => {
+    const parsed = schema.safeParse(values)
+
+    if (parsed.success) {
+      return { values: parsed.data, errors: {} as FieldErrors<T> }
+    }
+
+    const errors = parsed.error.issues.reduce<FieldErrors<T>>((accumulator, issue) => {
+      const fieldName = issue.path[0]
+
+      if (typeof fieldName === 'string') {
+        const castAcc = accumulator as unknown as Record<string, { type: string; message: string }>
+        castAcc[fieldName] = {
+          type: issue.code,
+          message: issue.message,
+        }
+      }
+
+      return accumulator
+    }, {} as FieldErrors<T>)
+
+    return { values: {} as T, errors }
+  }) as unknown as Resolver<T>
+
   const form = useForm<T>({
-    // cast resolver to any to satisfy some generic mismatches between resolver types
-    resolver: zodResolver(schema) as any,
-    defaultValues: (defaultValues || {}) as any,
+    resolver,
+    defaultValues: defaultValues as DefaultValues<T>,
     mode: 'onBlur', // Validate on blur for better UX
   })
 

@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useState, useMemo } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/client'
@@ -8,8 +8,11 @@ import { createClient } from '@/lib/supabase/client'
 export default function LoginPage() {
   const router = useRouter()
   const supabase = createClient()
-
-  const [message, setMessage] = useState<string | null>(null)
+  const message = useMemo(() => {
+    if (typeof window === 'undefined') return null
+    const params = new URLSearchParams(window.location.search)
+    return params.get('message')
+  }, [])
   
   const [formData, setFormData] = useState({
     email: '',
@@ -17,11 +20,6 @@ export default function LoginPage() {
   })
   const [error, setError] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
-
-  useEffect(() => {
-    const params = new URLSearchParams(window.location.search)
-    setMessage(params.get('message'))
-  }, [])
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target
@@ -48,7 +46,7 @@ export default function LoginPage() {
         router.push('/dashboard')
         router.refresh()
       }
-    } catch (err) {
+    } catch {
       setError('Có lỗi xảy ra. Vui lòng thử lại.')
     } finally {
       setLoading(false)
@@ -69,7 +67,7 @@ export default function LoginPage() {
       if (error) {
         setError(error.message)
       }
-    } catch (err) {
+    } catch {
       setError('Có lỗi xảy ra khi đăng nhập với GitHub')
     }
   }

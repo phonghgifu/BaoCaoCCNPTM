@@ -2,7 +2,10 @@ import Link from 'next/link'
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 import { PostList } from '@/components/dashboard/post-list'
-import { deriveCategory } from '@/lib/content'
+import { MetricsChart } from '@/components/dashboard/metrics-chart'
+import { getDashboardOverview } from '@/services/dashboard.service'
+import { getDashboardPosts } from '@/services/posts.service'
+import type { UserRole } from '@/types/database'
 
 type CommentWithPost = {
   id: string
@@ -29,18 +32,18 @@ export default async function DashboardPage() {
     redirect('/login')
   }
 
-  const { data: posts, error } = await supabase
-    .from('posts')
-    .select('*')
-    .eq('author_id', user.id)
-    .order('created_at', { ascending: false })
+  const { data: profile } = await supabase
+    .from('profiles')
+    .select('role')
+    .eq('id', user.id)
+    .single()
 
-  const { count: commentCount } = await supabase
-    .from('comments')
-    .select('id, posts!inner(author_id)', { count: 'exact', head: true })
-    .eq('posts.author_id', user.id)
+  const viewerRole = (profile?.role ?? 'user') as UserRole
+  const elevated = viewerRole === 'admin' || viewerRole === 'editor'
+  const posts = await getDashboardPosts(supabase, user.id)
+  const overview = await getDashboardOverview(supabase, user.id, viewerRole)
 
-  const { data: recentComments } = await supabase
+  let recentCommentsQuery = supabase
     .from('comments')
     .select(`
       id,
@@ -57,33 +60,33 @@ export default async function DashboardPage() {
         avatar_url
       )
     `)
-    .eq('posts.author_id', user.id)
     .order('created_at', { ascending: false })
     .limit(12)
 
-  if (error) {
-    console.error('Error fetching posts:', error)
+  if (!elevated) {
+    recentCommentsQuery = recentCommentsQuery.eq('posts.author_id', user.id)
   }
 
+  const { data: recentComments } = await recentCommentsQuery
+
   const ownedPosts = posts || []
-  const publishedCount = ownedPosts.filter((post: any) => post.status === 'published').length
-  const draftCount = ownedPosts.filter((post: any) => post.status === 'draft').length
+  const publishedCount = overview.publishedPosts
+  const draftCount = overview.draftPosts
   const typedComments = (recentComments || []) as unknown as CommentWithPost[]
-  const totalComments = commentCount ?? 0
+  const totalComments = overview.totalComments
   const latestActivity = typedComments.slice(0, 3)
 
-  const categoryHighlights = (ownedPosts as any[]).reduce((accumulator: Record<string, number>, post: any) => {
-    const category = deriveCategory(post)
-    accumulator[category] = (accumulator[category] || 0) + 1
+  const categoryHighlights = overview.categoryBreakdown.reduce<Record<string, number>>((accumulator, item) => {
+    accumulator[item.label] = item.count
     return accumulator
   }, {})
 
   return (
-    <main className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
+    <main className="min-h-screen bg-linear-to-br from-blue-50 via-white to-purple-50">
       {/* Header Section */}
       <section className="section-shell py-8 sm:py-12 lg:py-16">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="rounded-3xl bg-gradient-to-r from-blue-600 via-cyan-600 to-purple-600 p-8 sm:p-10 lg:p-12 text-white shadow-2xl">
+          <div className="rounded-3xl bg-linear-to-r from-blue-600 via-cyan-600 to-purple-600 p-8 sm:p-10 lg:p-12 text-white shadow-2xl">
             <div className="flex flex-col gap-6 sm:flex-row sm:items-center sm:justify-between">
               <div>
                 <div className="inline-flex items-center gap-2 rounded-full bg-white/20 backdrop-blur px-4 py-2 text-xs font-bold uppercase tracking-wider text-blue-100">
@@ -96,6 +99,9 @@ export default async function DashboardPage() {
                 <p className="mt-3 max-w-2xl text-lg text-blue-100">
                   Quản lý, xuất bản, và theo dõi hiệu suất bài viết của bạn.
                 </p>
+                <div className="mt-4 inline-flex items-center gap-2 rounded-full bg-white/15 px-4 py-2 text-xs font-semibold uppercase tracking-[0.18em] text-white/90">
+                  Vai trò: {viewerRole}
+                </div>
               </div>
 
               <Link
@@ -129,6 +135,16 @@ export default async function DashboardPage() {
               </div>
             ))}
           </div>
+        </div>
+      </section>
+
+      <section className="section-shell py-8 sm:py-12">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <MetricsChart
+            title="Biểu đồ nội dung"
+            subtitle="Tổng quan các nhóm chủ đề xuất hiện trong bài viết của bạn."
+            items={Object.entries(categoryHighlights).map(([label, count]) => ({ label, count }))}
+          />
         </div>
       </section>
 
@@ -168,15 +184,15 @@ export default async function DashboardPage() {
 
                 {/* Posts List */}
                 {ownedPosts.length > 0 ? (
-                  <PostList posts={ownedPosts} />
+                  <PostList posts={ownedPosts} viewerId={user.id} viewerRole={viewerRole} />
                 ) : (
-                  <div className="rounded-3xl border-2 border-dashed border-gray-300 bg-gradient-to-b from-gray-50 to-white py-12 px-6 text-center">
+                  <div className="rounded-3xl border-2 border-dashed border-gray-300 bg-linear-to-b from-gray-50 to-white py-12 px-6 text-center">
                     <span className="text-5xl">📭</span>
                     <h3 className="mt-4 text-xl font-bold text-gray-900">Chưa có bài viết nào</h3>
                     <p className="mt-2 text-gray-600">Hãy viết bài viết đầu tiên để bắt đầu!  </p>
                     <Link
                       href="/dashboard/new"
-                      className="mt-6 inline-flex items-center justify-center rounded-full bg-gradient-to-r from-blue-600 to-blue-700 px-6 py-3 font-bold text-white transition hover:shadow-lg"
+                      className="mt-6 inline-flex items-center justify-center rounded-full bg-linear-to-r from-blue-600 to-blue-700 px-6 py-3 font-bold text-white transition hover:shadow-lg"
                     >
                       ✍️ Viết Bài Đầu Tiên
                     </Link>
@@ -198,7 +214,7 @@ export default async function DashboardPage() {
                       <Link
                         key={activity.id}
                         href={`/posts/${activity.posts?.[0]?.slug || '#'}`}
-                        className="block group rounded-2xl border border-gray-200 bg-gradient-to-r from-blue-50/50 to-cyan-50/50 p-4 transition hover:border-blue-300 hover:shadow-md"
+                        className="block group rounded-2xl border border-gray-200 bg-linear-to-r from-blue-50/50 to-cyan-50/50 p-4 transition hover:border-blue-300 hover:shadow-md"
                       >
                         <p className="text-xs font-bold text-blue-700 uppercase tracking-wide">
                           {activity.profiles?.[0]?.display_name || 'Ẩn danh'}
@@ -227,7 +243,7 @@ export default async function DashboardPage() {
                 <div className="mt-6 space-y-3">
                   <Link
                     href="/dashboard/new"
-                    className="block w-full rounded-2xl bg-gradient-to-r from-blue-600 to-blue-700 px-4 py-3 text-center font-bold text-white transition hover:-translate-y-0.5 hover:shadow-lg"
+                    className="block w-full rounded-2xl bg-linear-to-r from-blue-600 to-blue-700 px-4 py-3 text-center font-bold text-white transition hover:-translate-y-0.5 hover:shadow-lg"
                   >
                     ✍️ Viết Bài Mới
                   </Link>
@@ -243,11 +259,19 @@ export default async function DashboardPage() {
                   >
                     👤 Hồ Sơ
                   </Link>
+                  {viewerRole === 'admin' && (
+                    <Link
+                      href="/dashboard/admin/users"
+                      className="block w-full rounded-2xl border border-blue-200 bg-blue-50 px-4 py-3 text-center font-bold text-blue-700 transition hover:bg-blue-100"
+                    >
+                      👥 Quản Trị Người Dùng
+                    </Link>
+                  )}
                 </div>
               </div>
 
               {/* Tips */}
-              <div className="rounded-3xl border border-purple-200 bg-gradient-to-br from-purple-50 to-pink-50 p-6 shadow-lg">
+              <div className="rounded-3xl border border-purple-200 bg-linear-to-br from-purple-50 to-pink-50 p-6 shadow-lg">
                 <p className="text-sm font-bold uppercase tracking-wider text-purple-700">💡 Mẹo</p>
                 <h3 className="mt-3 text-lg font-black text-gray-900">Tăng Lượt Xem</h3>
                 <ul className="mt-4 space-y-2 text-sm text-gray-700">

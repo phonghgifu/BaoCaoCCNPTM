@@ -1,5 +1,7 @@
 'use client'
 
+/* eslint-disable @next/next/no-img-element */
+
 import { useState, useEffect, useMemo } from 'react'
 import { useRouter } from 'next/navigation'
 import { Modal } from '@/components/ui/modal'
@@ -8,8 +10,17 @@ import { useAuth } from '@/lib/auth/context'
 import { getPublicUrl } from '@/lib/supabase/storage'
 import { reportError } from '@/lib/telemetry'
 
+type Project = {
+  id: number
+  title: string
+  description: string
+  technologies: string[]
+  image: string | null
+  link: string | null
+}
+
 // Safely stringify errors (handles circular refs)
-function stringifyError(err: any): string {
+function stringifyError(err: unknown): string {
   try {
     if (!err) return 'unknown error'
     if (err instanceof Error) return err.message
@@ -24,22 +35,13 @@ function stringifyError(err: any): string {
       })
     }
     return String(err)
-  } catch (e) {
+  } catch {
     try {
       return String(err)
-    } catch (e2) {
+    } catch {
       return 'unserializable error'
     }
   }
-}
-
-interface Project {
-  id: number
-  title: string
-  description: string
-  technologies: string[]
-  image: string | null
-  link: string | null
 }
 
 export function ProjectCard({ project }: { project: Project }) {
@@ -47,14 +49,26 @@ export function ProjectCard({ project }: { project: Project }) {
   const [likeCount, setLikeCount] = useState<number>(0)
   const [isLiked, setIsLiked] = useState(false)
   const [loading, setLoading] = useState(false)
-  const [imageUrl, setImageUrl] = useState<string | null>(null)
-  const [imageLoaded, setImageLoaded] = useState(false)
+  const [loadedImages, setLoadedImages] = useState<Record<string, boolean>>({})
 
   const supabase = useMemo(() => createClient(), [])
   const router = useRouter()
   const { user } = useAuth()
+  const userId = user?.id ?? null
   const detailHref = project.link && project.link !== '#' ? project.link : `/portfolio/${project.id}`
   const isExternalLink = !!project.link && /^https?:\/\//.test(project.link)
+
+  const imageUrl = useMemo(() => {
+    if (project.image && project.image.includes('/')) {
+      try {
+        return getPublicUrl(project.image)
+      } catch (error) {
+        reportError(error, { source: 'ProjectCard.getPublicUrl', projectId: project.id })
+      }
+    }
+
+    return null
+  }, [project.id, project.image])
 
   useEffect(() => {
     let active = true
@@ -70,20 +84,20 @@ export function ProjectCard({ project }: { project: Project }) {
 
         if (active) setLikeCount(count ?? 0)
 
-        if (user) {
+        if (userId) {
           const { data: likeData } = await supabase
             .from('project_likes')
             .select('id')
             .eq('project_id', project.id)
-            .eq('user_id', user.id)
+            .eq('user_id', userId)
             .maybeSingle()
 
           if (active) setIsLiked(!!likeData)
         } else if (active) {
           setIsLiked(false)
         }
-      } catch (err) {
-        console.error('Error loading likes:', stringifyError(err))
+      } catch (error) {
+        console.error('Error loading likes:', stringifyError(error))
         if (active) {
           setLikeCount(0)
           setIsLiked(false)
@@ -96,24 +110,10 @@ export function ProjectCard({ project }: { project: Project }) {
     return () => {
       active = false
     }
-  }, [project.id, user?.id, supabase])
-
-  useEffect(() => {
-    setImageLoaded(false)
-    setImageUrl(null)
-
-    if (project.image && project.image.includes('/')) {
-      try {
-        const url = getPublicUrl(project.image)
-        setImageUrl(url)
-      } catch (err) {
-        reportError(err, { source: 'ProjectCard.getPublicUrl', projectId: project.id })
-      }
-    }
-  }, [project.id, project.image])
+  }, [project.id, userId, supabase])
 
   const handleLike = async () => {
-    if (!user) {
+    if (!userId) {
       router.push('/login')
       return
     }
@@ -126,7 +126,7 @@ export function ProjectCard({ project }: { project: Project }) {
           .from('project_likes')
           .delete()
           .eq('project_id', project.id)
-          .eq('user_id', user.id)
+          .eq('user_id', userId)
 
         if (error) throw error
 
@@ -135,7 +135,7 @@ export function ProjectCard({ project }: { project: Project }) {
       } else {
         const { error } = await supabase.from('project_likes').insert({
           project_id: project.id,
-          user_id: user.id,
+          user_id: userId,
         })
 
         if (error) throw error
@@ -143,8 +143,8 @@ export function ProjectCard({ project }: { project: Project }) {
         setIsLiked(true)
         setLikeCount((c) => c + 1)
       }
-    } catch (err) {
-      reportError(err, { source: 'ProjectCard.handleLike', projectId: project.id })
+    } catch (error) {
+      reportError(error, { source: 'ProjectCard.handleLike', projectId: project.id })
     } finally {
       setLoading(false)
     }
@@ -163,21 +163,22 @@ export function ProjectCard({ project }: { project: Project }) {
         role="button"
         tabIndex={0}
         aria-label={`Mở chi tiết dự án ${project.title}`}
-        className="group overflow-hidden rounded-[2rem] surface-card cursor-pointer transition hover:-translate-y-1 hover:shadow-2xl hover:shadow-blue-100/30"
+        className="group overflow-hidden rounded-4xl surface-card cursor-pointer transition hover:-translate-y-1 hover:shadow-2xl hover:shadow-blue-100/30"
       >
-        <div className="relative flex h-52 items-center justify-center overflow-hidden bg-[var(--surface-soft)]">
+        <div className="relative flex h-52 items-center justify-center overflow-hidden bg-(--surface-soft)">
           {imageUrl ? (
             <img
+              key={imageUrl}
               src={imageUrl}
               alt={project.title}
-              onLoad={() => setImageLoaded(true)}
+              onLoad={() => setLoadedImages((current) => ({ ...current, [imageUrl]: true }))}
               className={`h-full w-full object-cover transition duration-500 group-hover:scale-105 ${
-                imageLoaded ? 'animate-blur-to-sharp' : 'opacity-50'
+                loadedImages[imageUrl] ? 'animate-blur-to-sharp' : 'opacity-50'
               }`}
               loading="lazy"
             />
           ) : (
-            <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-blue-500 via-cyan-500 to-violet-500 text-white gradient-foreground">
+            <div className="flex h-full w-full items-center justify-center bg-linear-to-br from-blue-500 via-cyan-500 to-violet-500 text-white gradient-foreground">
               <span className="text-7xl opacity-95" aria-hidden>{project.image ?? '📁'}</span>
               <span className="sr-only">Hình ảnh dự án: {project.title}</span>
             </div>
@@ -195,7 +196,7 @@ export function ProjectCard({ project }: { project: Project }) {
               {project.technologies.slice(0, 2).map((tech, i) => (
                 <span
                   key={i}
-                  className="inline-block rounded-full border border-[var(--surface-border)] bg-[var(--surface-soft)] px-3 py-1 text-xs font-medium text-[var(--page-fg)]"
+                  className="inline-block rounded-full border border-(--surface-border) bg-(--surface-soft) px-3 py-1 text-xs font-medium text-(--page-fg)"
                 >
                   {tech}
                 </span>
@@ -212,7 +213,7 @@ export function ProjectCard({ project }: { project: Project }) {
                 className={`like-button rounded-full px-4 py-2 text-sm font-medium transition ${
                   isLiked
                     ? 'bg-red-100 text-red-700 hover:bg-red-200 liked'
-                    : 'bg-[var(--surface-soft)] text-[var(--page-fg)] hover:bg-gray-200'
+                    : 'bg-(--surface-soft) text-(--page-fg) hover:bg-gray-200'
                 } disabled:opacity-50`}
                 aria-pressed={isLiked}
                 aria-label={isLiked ? `Bỏ thích ${project.title}` : `Thích ${project.title}`}
@@ -230,15 +231,16 @@ export function ProjectCard({ project }: { project: Project }) {
         <div className="space-y-6 py-6">
           {imageUrl ? (
             <img
+              key={`${imageUrl}-modal`}
               src={imageUrl}
               alt={project.title}
-              onLoad={() => setImageLoaded(true)}
+              onLoad={() => setLoadedImages((current) => ({ ...current, [imageUrl]: true }))}
               className={`h-64 w-full rounded-2xl object-cover ${
-                imageLoaded ? 'animate-blur-to-sharp' : 'opacity-50'
+                loadedImages[imageUrl] ? 'animate-blur-to-sharp' : 'opacity-50'
               }`}
             />
           ) : (
-            <div className="flex h-64 items-center justify-center rounded-2xl bg-gradient-to-br from-blue-500 via-cyan-500 to-violet-500 text-white">
+            <div className="flex h-64 items-center justify-center rounded-2xl bg-linear-to-br from-blue-500 via-cyan-500 to-violet-500 text-white">
               <span className="text-9xl opacity-95">{project.image ?? '📁'}</span>
             </div>
           )}
@@ -277,7 +279,7 @@ export function ProjectCard({ project }: { project: Project }) {
                 className={`like-button rounded-2xl px-4 py-2.5 transition ${
                   isLiked
                     ? 'bg-red-100 text-red-700 hover:bg-red-200 liked'
-                    : 'bg-[var(--surface-soft)] text-[var(--page-fg)] hover:bg-gray-200'
+                    : 'bg-(--surface-soft) text-(--page-fg) hover:bg-gray-200'
                 } disabled:opacity-50`}
               >
                 {isLiked ? '❤️ Bỏ thích' : '🤍 Thích'} ({likeCount})

@@ -1,6 +1,10 @@
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/server'
 import { deriveCategory, deriveTags, type ContentPost } from '@/lib/content'
+import { searchPublishedPosts } from '@/services/posts.service'
+import { SectionHeader } from '@/components/ui/section-header'
+
+/* eslint-disable @next/next/no-img-element */
 
 interface SearchPageProps {
   searchParams: Promise<{ q?: string }>
@@ -27,33 +31,32 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
   let error: string | null = null
 
   if (query.trim().length > 0) {
-    const { data, error: searchError } = await supabase.rpc('search_posts', { search_query: query })
-
-    if (searchError) {
-      error = searchError.message
-    } else {
-      results = (data || []) as SearchResult[]
+    try {
+      results = (await searchPublishedPosts(supabase, query)) as SearchResult[]
+    } catch (searchError: unknown) {
+      error = searchError instanceof Error ? searchError.message : 'Không thể tìm kiếm bài viết'
     }
   }
 
   return (
     <main className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8 lg:py-12">
-      <div className="mb-8 rounded-[2.5rem] bg-gradient-to-r from-blue-600 via-cyan-600 to-violet-600 p-6 text-white shadow-2xl shadow-blue-200/30 sm:p-8 lg:p-10">
+      <section className="mb-8 rounded-4xl bg-linear-to-r from-blue-600 via-cyan-600 to-violet-600 p-6 text-white shadow-2xl shadow-blue-200/30 sm:p-8 lg:p-10">
         <p className="text-xs font-semibold uppercase tracking-[0.24em] text-blue-100">Search</p>
-        <h1 className="mt-2 text-4xl font-black sm:text-5xl">Tìm kiếm bài viết</h1>
-        <p className="mt-3 max-w-2xl text-blue-50">
-          Search theo tiêu đề, tóm tắt hoặc nội dung để tìm đúng bài bạn cần trong vài giây.
-        </p>
-      </div>
+        <SectionHeader
+          variant="inverse"
+          title="Tìm kiếm bài viết"
+          description="Tìm theo tiêu đề, tag hoặc nội dung để lọc nhanh đúng thông tin cần đọc."
+        />
+      </section>
 
-      <form method="GET" className="surface-card mb-8 rounded-[2rem] p-4 sm:p-6">
+      <form method="GET" className="surface-card mb-8 rounded-4xl p-4 sm:p-6">
         <div className="grid gap-4 lg:grid-cols-[1fr_auto]">
           <input
             type="text"
             name="q"
             defaultValue={query}
-            placeholder="Nhập từ khóa tìm kiếm..."
-            className="w-full rounded-2xl border border-[var(--surface-border)] px-4 py-3 text-base shadow-sm outline-none focus:border-blue-500"
+            placeholder="Nhập từ khóa tìm kiếm: title, tag hoặc nội dung..."
+            className="w-full rounded-2xl border border-(--surface-border) px-4 py-3 text-base shadow-sm outline-none focus:border-blue-500"
           />
           <button
             type="submit"
@@ -68,7 +71,7 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
             <Link
               key={topic}
               href={`/search?q=${encodeURIComponent(topic)}`}
-              className="rounded-full border border-[var(--surface-border)] bg-[var(--surface-soft)] px-3 py-1.5 text-[var(--page-fg)] transition hover:border-blue-300 hover:text-blue-700"
+              className="rounded-full border border-(--surface-border) bg-(--surface-soft) px-3 py-1.5 text-(--page-fg) transition hover:border-blue-300 hover:text-blue-700"
             >
               {topic}
             </Link>
@@ -77,31 +80,31 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
       </form>
 
       {query.trim().length === 0 ? (
-        <div className="surface-card rounded-[2rem] py-16 text-center">
-          <p className="text-center text-[var(--surface-muted)]">Hãy nhập từ khóa để tìm kiếm bài viết</p>
+        <div className="surface-card rounded-4xl py-16 text-center">
+          <p className="text-center text-(--surface-muted)">Hãy nhập từ khóa để tìm kiếm bài viết</p>
         </div>
       ) : error ? (
         <div className="rounded-2xl border border-red-200 bg-red-50 p-4 text-red-600">
           Lỗi: {error}
         </div>
       ) : results.length === 0 ? (
-        <div className="surface-card rounded-[2rem] py-16 text-center">
-          <p className="text-[var(--surface-muted)]">Không tìm thấy bài viết nào phù hợp với &quot;{query}&quot;</p>
+        <div className="surface-card rounded-4xl py-16 text-center">
+          <p className="text-(--surface-muted)">Không tìm thấy bài viết nào phù hợp với &quot;{query}&quot;</p>
         </div>
       ) : (
         <>
-          <div className="mb-6 flex flex-col gap-3 rounded-[2rem] surface-card px-5 py-4 sm:flex-row sm:items-center sm:justify-between">
-            <p className="text-[var(--surface-muted)]">
+          <div className="mb-6 flex flex-col gap-3 rounded-4xl surface-card px-5 py-4 sm:flex-row sm:items-center sm:justify-between">
+            <p className="text-(--surface-muted)">
               Tìm thấy <strong>{results.length}</strong> kết quả cho &quot;{query}&quot;
             </p>
-            <p className="text-sm text-[var(--surface-muted)]">Gợi ý theo dõi các tag và category để mở rộng phạm vi tìm kiếm.</p>
+            <p className="text-sm text-(--surface-muted)">Gợi ý theo dõi các tag và category để mở rộng phạm vi tìm kiếm.</p>
           </div>
 
           <div className="space-y-6">
             {results.map((post) => (
               <article
                 key={post.id}
-                className="surface-card overflow-hidden rounded-[2rem] transition hover:-translate-y-1 hover:shadow-2xl hover:shadow-blue-100/40"
+                className="surface-card overflow-hidden rounded-4xl transition hover:-translate-y-1 hover:shadow-2xl hover:shadow-blue-100/40"
               >
                 {post.image_url && (
                   <img
@@ -129,7 +132,7 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
                     </p>
                   )}
 
-                  <div className="mt-5 flex flex-wrap items-center gap-4 text-sm text-[var(--surface-muted)]">
+                  <div className="mt-5 flex flex-wrap items-center gap-4 text-sm text-(--surface-muted)">
                     <span>
                       Bởi {post.profiles?.display_name || 'Ẩn danh'}
                     </span>

@@ -54,7 +54,7 @@ export default function RegisterPage() {
         // Success - redirect to login
         router.push('/login?message=Đăng ký thành công! Vui lòng đăng nhập.')
       }
-    } catch (err) {
+    } catch {
       setError('Có lỗi xảy ra. Vui lòng thử lại.')
     } finally {
       setLoading(false)

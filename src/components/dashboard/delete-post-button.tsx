@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 import { reportError } from '@/lib/telemetry'
+import { deletePost } from '@/services/posts.service'
 
 interface DeletePostButtonProps {
   postId: string
@@ -25,12 +26,7 @@ export function DeletePostButton({ postId, postTitle }: DeletePostButtonProps) {
     setLoading(true)
 
     try {
-      const { error } = await supabase
-        .from('posts')
-        .delete()
-        .eq('id', postId)
-
-      if (error) throw error
+      await deletePost(supabase, postId)
 
       router.refresh()
     } catch (err) {

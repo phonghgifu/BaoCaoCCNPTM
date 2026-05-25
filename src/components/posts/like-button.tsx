@@ -80,18 +80,22 @@ export function LikeButton({ postId, userId, initialLikeCount }: LikeButtonProps
       // Success - clear optimistic state
       setOptimisticState(null)
       router.refresh()
-    } catch (err) {
+    } catch (error) {
       // Rollback on error
-      console.error('Like action failed:', err)
+      console.error('Like action failed:', error)
       setIsLiked(previousLiked)
       setLikeCount(previousCount)
       setOptimisticState(null)
 
-      reportError(err, { source: 'LikeButton.handleLike', postId })
+      reportError(error, { source: 'LikeButton.handleLike', postId })
 
       // Show error toast if available
-      if (typeof window !== 'undefined' && (window as any).showToast) {
-        (window as any).showToast('❌ Không thể cập nhật like. Vui lòng thử lại.', 'error')
+      if (typeof window !== 'undefined') {
+        const toastWindow = window as Window & {
+          showToast?: (message: string, type?: 'error' | 'success' | 'info') => void
+        }
+
+        toastWindow.showToast?.('❌ Không thể cập nhật like. Vui lòng thử lại.', 'error')
       }
     } finally {
       setLoading(false)

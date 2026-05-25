@@ -1,3 +1,5 @@
+import type { SupabaseClient } from '@supabase/supabase-js'
+
 export interface SupabaseEnv {
   url: string
   anonKey: string
@@ -90,5 +92,5 @@ export function createSupabaseDisabledClient() {
         getPublicUrl: () => ({ data: { publicUrl: '' } }),
       }),
     },
-  } as any
+  } as unknown as SupabaseClient
 }

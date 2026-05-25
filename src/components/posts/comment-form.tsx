@@ -41,8 +41,8 @@ export function CommentForm({ postId }: CommentFormProps) {
 
       setContent('')
       router.refresh()
-    } catch (err: any) {
-      setError(err.message || 'Có lỗi xảy ra')
+    } catch (error: unknown) {
+      setError(error instanceof Error ? error.message : 'Có lỗi xảy ra')
     } finally {
       setLoading(false)
     }

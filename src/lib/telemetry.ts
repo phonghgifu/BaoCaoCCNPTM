@@ -1,5 +1,5 @@
 // Lightweight telemetry helper
-export async function reportError(err: any, meta?: Record<string, any>) {
+export async function reportError(err: unknown, meta?: Record<string, unknown>) {
   try {
     let errStr: string
     try {
@@ -15,10 +15,10 @@ export async function reportError(err: any, meta?: Record<string, any>) {
           return v
         })
       } else errStr = String(err)
-    } catch (e) {
+    } catch {
       try {
         errStr = String(err)
-      } catch (e2) {
+      } catch {
         errStr = 'unserializable error'
       }
     }
@@ -34,7 +34,6 @@ export async function reportError(err: any, meta?: Record<string, any>) {
     try {
       if (typeof navigator !== 'undefined' && 'sendBeacon' in navigator) {
         const b = new Blob([JSON.stringify(payload)], { type: 'application/json' })
-        // @ts-ignore
         navigator.sendBeacon('/api/error-report', b)
       } else {
         fetch('/api/error-report', {
@@ -44,11 +43,11 @@ export async function reportError(err: any, meta?: Record<string, any>) {
           keepalive: true,
         }).catch(() => {})
       }
-    } catch (e) {
-      if (process.env.NODE_ENV === 'development') console.warn('Telemetry report failed', e)
+    } catch (error) {
+      if (process.env.NODE_ENV === 'development') console.warn('Telemetry report failed', error)
     }
-  } catch (e) {
-    if (process.env.NODE_ENV === 'development') console.warn('Telemetry internal error', e)
+  } catch (error) {
+    if (process.env.NODE_ENV === 'development') console.warn('Telemetry internal error', error)
   }
 }
 

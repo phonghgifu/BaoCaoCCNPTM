@@ -1,12 +1,20 @@
 import Link from 'next/link'
 import { Footer } from '@/components/footer'
 import { PortfolioBrowser } from '@/components/portfolio/portfolio-browser'
-import { PortfolioActions } from '@/components/portfolio/portfolio-actions'
 import { createClient } from '@/lib/supabase/server'
 
 export const metadata = {
   title: 'Portfolio - Professional Blog',
   description: 'Xem portfolio và các dự án từ cộng đồng sinh viên năm 4',
+}
+
+type ProjectRow = {
+  id: number
+  title: string
+  description?: string | null
+  technologies?: string[] | null
+  image?: string | null
+  link?: string | null
 }
 
 type Project = {
@@ -27,7 +35,9 @@ export default async function PortfolioPage() {
     .order('created_at', { ascending: false })
     .limit(12)
 
-  const displayedProjects: Project[] = ((projects ?? []) as any[]).map((project: any) => ({
+  const projectRows = (projects ?? []) as ProjectRow[]
+
+  const displayedProjects: Project[] = projectRows.map((project) => ({
     id: project.id,
     title: project.title,
     description: project.description ?? '',

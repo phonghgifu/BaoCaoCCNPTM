@@ -5,8 +5,10 @@
 
 -- Drop enum if exists để tránh conflict
 drop type if exists public.post_status cascade;
+drop type if exists public.user_role cascade;
 
 -- Tạo enum post_status
+create type public.user_role as enum ('admin', 'editor', 'user');
 create type public.post_status as enum ('draft', 'published');
 
 -- ============================================================
@@ -15,6 +17,25 @@ create type public.post_status as enum ('draft', 'published');
 alter table public.profiles enable row level security;
 alter table public.posts enable row level security;
 alter table public.comments enable row level security;
+
+create or replace function public.current_user_role()
+returns public.user_role
+language sql
+stable
+as $$
+  select coalesce(
+    (select role from public.profiles where id = auth.uid()),
+    'user'::public.user_role
+  );
+$$;
+
+create or replace function public.can_manage_all_posts()
+returns boolean
+language sql
+stable
+as $$
+  select public.current_user_role() in ('admin'::public.user_role, 'editor'::public.user_role);
+$$;
 
 -- ============================================================
 -- 2. POLICIES CHO BẢNG PROFILES
@@ -28,8 +49,8 @@ using (true);
 -- Policy: User chỉ có thể cập nhật profile của mình
 create policy "Users can update their own profile"
 on public.profiles for update
-using (auth.uid() = id)
-with check (auth.uid() = id);
+using (auth.uid() = id or public.can_manage_all_posts())
+with check (auth.uid() = id or public.can_manage_all_posts());
 
 -- Policy: User chỉ có thể insert profile của mình (không cần vì trigger xử lý)
 create policy "Users can insert their own profile"
@@ -48,7 +69,7 @@ using (status = 'published'::post_status);
 -- Policy: Người dùng có thể xem bài viết draft của chính mình
 create policy "Users can view their own draft posts"
 on public.posts for select
-using (auth.uid() = author_id);
+using (auth.uid() = author_id or public.can_manage_all_posts());
 
 -- Policy: Người dùng có thể tạo bài viết
 create policy "Users can create posts"
@@ -58,13 +79,13 @@ with check (auth.uid() = author_id);
 -- Policy: Người dùng chỉ có thể cập nhật bài viết của mình
 create policy "Users can update their own posts"
 on public.posts for update
-using (auth.uid() = author_id)
-with check (auth.uid() = author_id);
+using (auth.uid() = author_id or public.can_manage_all_posts())
+with check (auth.uid() = author_id or public.can_manage_all_posts());
 
 -- Policy: Người dùng chỉ có thể xóa bài viết của mình
 create policy "Users can delete their own posts"
 on public.posts for delete
-using (auth.uid() = author_id);
+using (auth.uid() = author_id or public.can_manage_all_posts());
 
 -- ============================================================
 -- 4. POLICIES CHO BẢNG COMMENTS
@@ -90,6 +111,7 @@ using (
     where posts.id = comments.post_id
     and posts.author_id = auth.uid()
   )
+  or public.can_manage_all_posts()
 );
 
 -- Policy: User đã đăng nhập có thể tạo bình luận

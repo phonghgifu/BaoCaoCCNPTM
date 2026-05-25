@@ -1,9 +1,11 @@
 export type PostStatus = 'draft' | 'published'
+export type UserRole = 'admin' | 'editor' | 'user'
 
 export interface Profile {
   id: string
   display_name: string | null
   avatar_url: string | null
+  role: UserRole
   created_at: string
   updated_at: string
 }

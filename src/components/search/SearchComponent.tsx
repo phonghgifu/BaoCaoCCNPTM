@@ -10,6 +10,9 @@ interface SearchSuggestion {
   type: 'post' | 'project'
 }
 
+type PostRow = { id: string | number; title: string }
+type ProjectRow = { id: string | number; title: string }
+
 /**
  * Debounced Search Component with Autocomplete
  * 
@@ -55,9 +58,12 @@ export function SearchComponent() {
           .or(`title.ilike.%${searchQuery}%,description.ilike.%${searchQuery}%`)
           .limit(3)
 
+        const postRows = (posts || []) as PostRow[]
+        const projectRows = (projects || []) as ProjectRow[]
+
         const results: SearchSuggestion[] = [
-          ...(posts || []).map((p: any) => ({ ...p, type: 'post' as const })),
-          ...(projects || []).map((p: any) => ({ ...p, type: 'project' as const })),
+          ...postRows.map((p) => ({ id: String(p.id), title: p.title, type: 'post' as const })),
+          ...projectRows.map((p) => ({ id: String(p.id), title: p.title, type: 'project' as const })),
         ]
 
         setSuggestions(results)
@@ -111,7 +117,10 @@ export function SearchComponent() {
         if (selectedIndex >= 0 && suggestions[selectedIndex]) {
           handleSuggestionClick(suggestions[selectedIndex])
         } else {
-          handleSearch(e as any)
+          if (query.trim()) {
+            router.push(`/search?q=${encodeURIComponent(query)}`)
+            setIsOpen(false)
+          }
         }
         break
       case 'Escape':
@@ -134,7 +143,6 @@ export function SearchComponent() {
             className="w-full rounded-2xl border-2 border-gray-200 bg-white px-4 py-3 pr-12 text-sm placeholder-gray-400 shadow-sm outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-200"
             aria-label="Tìm kiếm"
             aria-autocomplete="list"
-            aria-expanded={isOpen}
           />
           <svg
             className="pointer-events-none absolute right-4 top-1/2 h-5 w-5 -translate-y-1/2 text-gray-400"

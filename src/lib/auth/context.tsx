@@ -3,14 +3,16 @@
 import { createContext, useContext, useEffect, useState, ReactNode } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { reportError } from '@/lib/telemetry'
+import { getSupabaseEnv } from '@/lib/supabase/env'
 import type { User, AuthSession } from './types'
 
 const AuthContext = createContext<AuthSession | undefined>(undefined)
 
 export function AuthProvider({ children }: { children: ReactNode }) {
+  const hasSupabaseEnv = !!getSupabaseEnv()
   const [authSession, setAuthSession] = useState<AuthSession>({
     user: null,
-    isLoading: true,
+    isLoading: hasSupabaseEnv,
     isAuthenticated: false,
   })
 
@@ -23,11 +25,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       // If Supabase client fails to initialize (e.g., missing env vars during build)
       // we just disable auth
       console.warn('Supabase client not initialized:', error)
-      setAuthSession({
-        user: null,
-        isLoading: false,
-        isAuthenticated: false,
-      })
       return
     }
 
@@ -61,7 +58,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     try {
       const {
         data: { subscription },
-      } = supabase.auth.onAuthStateChange((_event: any, session: any) => {
+      } = supabase.auth.onAuthStateChange((_event, session) => {
         setAuthSession({
           user: session?.user as User | null,
           isLoading: false,

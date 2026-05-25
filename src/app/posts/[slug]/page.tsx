@@ -8,6 +8,8 @@ import { LikeButton } from '@/components/posts/like-button'
 import { PostActions } from '@/components/posts/post-actions'
 import { deriveCategory, deriveTags, estimateReadTime, getRelatedPosts } from '@/lib/content'
 
+/* eslint-disable @next/next/no-img-element */
+
 interface PostPageProps {
   params: Promise<{ slug: string }>
 }
@@ -87,7 +89,6 @@ export default async function PostPage({ params }: PostPageProps) {
 
   const { data: { user } } = await supabase.auth.getUser()
 
-  const category = deriveCategory(post)
   const tags = deriveTags(post)
   const readTime = estimateReadTime(post)
   const relatedPosts = getRelatedPosts(post, recentPosts || [], 3)

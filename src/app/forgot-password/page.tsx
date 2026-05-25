@@ -30,7 +30,7 @@ export default function ForgotPasswordPage() {
 
       setMessage('Kiểm tra email của bạn để reset mật khẩu. Link sẽ hết hạn trong 1 giờ.')
       setEmail('')
-    } catch (err) {
+    } catch {
       setError('Có lỗi xảy ra. Vui lòng thử lại.')
     } finally {
       setLoading(false)

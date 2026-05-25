@@ -1,8 +1,11 @@
 -- 1. CREATE PROFILES TABLE
+create type public.user_role as enum ('admin', 'editor', 'user');
+
 create table public.profiles (
   id uuid not null references auth.users on delete cascade,
   display_name text,
   avatar_url text,
+  role public.user_role not null default 'user',
   created_at timestamp with time zone default timezone('utc'::text, now()) not null,
   updated_at timestamp with time zone default timezone('utc'::text, now()) not null,
   primary key (id)
@@ -10,6 +13,7 @@ create table public.profiles (
 
 comment on table public.profiles is 'User profiles - extends auth.users';
 create index profiles_display_name_idx on public.profiles (display_name);
+create index profiles_role_idx on public.profiles (role);
 
 -- 2. CREATE FUNCTION TO AUTO-CREATE PROFILE ON USER SIGNUP
 create or replace function public.handle_new_user()
@@ -18,14 +22,34 @@ language plpgsql
 security definer set search_path = ''
 as $$
 begin
-  insert into public.profiles (id, display_name, avatar_url)
+  insert into public.profiles (id, display_name, avatar_url, role)
   values (
     new.id,
     new.raw_user_meta_data ->> 'display_name',
-    new.raw_user_meta_data ->> 'avatar_url'
+    new.raw_user_meta_data ->> 'avatar_url',
+    coalesce((new.raw_user_meta_data ->> 'role')::public.user_role, 'user'::public.user_role)
   );
   return new;
 end;
+$$;
+
+create or replace function public.current_user_role()
+returns public.user_role
+language sql
+stable
+as $$
+  select coalesce(
+    (select role from public.profiles where id = auth.uid()),
+    'user'::public.user_role
+  );
+$$;
+
+create or replace function public.can_manage_all_posts()
+returns boolean
+language sql
+stable
+as $$
+  select public.current_user_role() in ('admin'::public.user_role, 'editor'::public.user_role);
 $$;
 
 create trigger on_auth_user_created

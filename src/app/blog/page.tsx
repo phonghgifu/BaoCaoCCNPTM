@@ -2,6 +2,9 @@ import Link from 'next/link'
 import { createClient } from '@/lib/supabase/server'
 import { Footer } from '@/components/footer'
 import { deriveTags } from '@/lib/content'
+import type { ContentPost } from '@/lib/content'
+
+/* eslint-disable @next/next/no-img-element */
 
 interface BlogPageProps {
   searchParams: Promise<{
@@ -46,7 +49,15 @@ export default async function BlogPage({ searchParams }: BlogPageProps) {
   const page = Math.max(1, Number.parseInt(params.page || '1', 10) || 1)
   const sort = params.sort === 'oldest' ? 'oldest' : 'latest'
 
-  let posts: any[] | null = null
+  type BlogPost = ContentPost & {
+    author_id?: string | null
+    profiles?: {
+      display_name?: string | null
+      avatar_url?: string | null
+    } | null
+  }
+
+  let posts: BlogPost[] = []
   let fetchError: string | null = null
   let totalCount = 0
 
@@ -80,17 +91,17 @@ export default async function BlogPage({ searchParams }: BlogPageProps) {
       posts = res.data ?? []
       totalCount = res.count ?? 0
     }
-  } catch (err: any) {
-    fetchError = err?.message ?? String(err)
-    posts = []
-  }
+    } catch (error: unknown) {
+      fetchError = error instanceof Error ? error.message : String(error)
+      posts = []
+    }
 
   const totalPages = Math.max(1, Math.ceil(totalCount / PAGE_SIZE))
-  const hasResults = posts && posts.length > 0
+  const hasResults = posts.length > 0
   const showingStart = totalCount === 0 ? 0 : (page - 1) * PAGE_SIZE + 1
   const showingEnd = totalCount === 0 ? 0 : Math.min(page * PAGE_SIZE, totalCount)
 
-  const topTags = (posts || [])
+  const topTags = posts
     .flatMap((post) => deriveTags(post))
     .reduce<Record<string, number>>((accumulator, tag) => {
       accumulator[tag] = (accumulator[tag] || 0) + 1
@@ -101,7 +112,7 @@ export default async function BlogPage({ searchParams }: BlogPageProps) {
     .sort((left, right) => right[1] - left[1])
     .slice(0, 6)
 
-  const authorCounts = (posts || []).reduce<Record<string, { name: string; avatar: string; posts: number }>>((accumulator, post: any) => {
+  const authorCounts = posts.reduce<Record<string, { name: string; avatar: string; posts: number }>>((accumulator, post) => {
     const authorId = post.author_id || 'unknown'
     const displayName = post.profiles?.display_name || 'Ẩn danh'
     const avatarUrl = post.profiles?.avatar_url || 'https://images.pexels.com/photos/220453/pexels-photo-220453.jpeg?auto=compress&cs=tinysrgb&w=150'
@@ -389,7 +400,7 @@ export default async function BlogPage({ searchParams }: BlogPageProps) {
                               post.profiles?.avatar_url ||
                               'https://images.pexels.com/photos/220453/pexels-photo-220453.jpeg?auto=compress&cs=tinysrgb&w=150'
                             }
-                            alt={post.profiles?.display_name}
+                            alt={post.profiles?.display_name ?? 'Tác giả'}
                             className="h-8 w-8 rounded-full object-cover"
                           />
                           <p className="text-xs font-semibold text-gray-900 truncate">

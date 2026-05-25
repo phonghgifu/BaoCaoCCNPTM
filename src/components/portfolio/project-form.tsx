@@ -51,9 +51,9 @@ export function ProjectForm({ onCreated }: Props) {
       setFile(null)
 
       onCreated?.()
-    } catch (err: any) {
-      reportError(err, { source: 'ProjectForm.handleSubmit' })
-      setError(err.message || 'Lỗi khi tạo dự án')
+    } catch (error: unknown) {
+      reportError(error, { source: 'ProjectForm.handleSubmit' })
+      setError(error instanceof Error ? error.message : 'Lỗi khi tạo dự án')
     } finally {
       setLoading(false)
     }

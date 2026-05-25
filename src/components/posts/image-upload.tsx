@@ -1,19 +1,30 @@
 'use client'
 
 import { useState } from 'react'
-import { createClient } from '@/lib/supabase/client'
+import Image from 'next/image'
 import { reportError } from '@/lib/telemetry'
+import { uploadAvatarImage, uploadThumbnailImage } from '@/lib/supabase/storage'
 
 interface ImageUploadProps {
   onImageUploaded: (url: string) => void
   disabled?: boolean
+  kind?: 'avatar' | 'thumbnail'
+  label?: string
+  description?: string
 }
 
-export function ImageUpload({ onImageUploaded, disabled = false }: ImageUploadProps) {
-  const supabase = createClient()
+export function ImageUpload({
+  onImageUploaded,
+  disabled = false,
+  kind = 'thumbnail',
+  label,
+  description,
+}: ImageUploadProps) {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [preview, setPreview] = useState<string | null>(null)
+  const displayLabel = label ?? (kind === 'avatar' ? 'Ảnh đại diện' : 'Ảnh bài viết')
+  const inputDescription = description ?? (kind === 'avatar' ? 'Avatar sẽ được lưu vào Supabase Storage.' : 'Thumbnail sẽ được lưu vào Supabase Storage.')
 
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
@@ -40,36 +51,13 @@ export function ImageUpload({ onImageUploaded, disabled = false }: ImageUploadPr
       }
       reader.readAsDataURL(file)
 
-      // Check authentication
-      const { data: { user } } = await supabase.auth.getUser()
-      if (!user) {
-        throw new Error('Bạn cần đăng nhập để upload ảnh')
-      }
+      const uploader = kind === 'avatar' ? uploadAvatarImage : uploadThumbnailImage
+      const { publicUrl } = await uploader(file)
 
-      // Upload to Supabase Storage
-      const fileName = `${Date.now()}-${Math.random().toString(36).substring(7)}`
-      const { data, error: uploadError } = await supabase.storage
-        .from('blog-images')
-        .upload(`posts/${fileName}`, file, {
-          cacheControl: '3600',
-          upsert: false
-        })
-
-      if (uploadError) {
-        reportError(uploadError, { source: 'ImageUpload.upload', fileName })
-        throw new Error(`Lỗi upload: ${uploadError.message}`)
-      }
-
-      // Get public URL
-      const { data: publicData } = supabase.storage
-        .from('blog-images')
-        .getPublicUrl(`posts/${fileName}`)
-
-      const imageUrl = publicData.publicUrl
-      onImageUploaded(imageUrl)
-    } catch (err: any) {
+      onImageUploaded(publicUrl)
+    } catch (err: unknown) {
       reportError(err, { source: 'ImageUpload.handleFileChange' })
-      setError(err.message || 'Có lỗi xảy ra khi upload ảnh. Vui lòng kiểm tra đăng nhập hoặc thử lại.')
+      setError(err instanceof Error ? err.message : 'Có lỗi xảy ra khi upload ảnh. Vui lòng kiểm tra đăng nhập hoặc thử lại.')
       setPreview(null)
     } finally {
       setLoading(false)
@@ -80,7 +68,7 @@ export function ImageUpload({ onImageUploaded, disabled = false }: ImageUploadPr
     <div className="space-y-4">
       <div>
         <label className="block text-sm font-semibold text-gray-700 mb-2">
-          📷 Ảnh bài viết
+          {kind === 'avatar' ? '👤' : '📷'} {displayLabel}
         </label>
         
         <div className="relative">
@@ -100,7 +88,7 @@ export function ImageUpload({ onImageUploaded, disabled = false }: ImageUploadPr
               hover:border-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
         </div>
-        <p className="text-xs text-gray-500 mt-1">JPG, PNG, GIF (Max 5MB)</p>
+        <p className="text-xs text-gray-500 mt-1">{inputDescription} JPG, PNG, GIF (Max 5MB)</p>
       </div>
 
       {error && (
@@ -132,10 +120,13 @@ export function ImageUpload({ onImageUploaded, disabled = false }: ImageUploadPr
       {preview && (
         <div className="bg-gray-50 border border-gray-200 rounded-lg p-4">
           <p className="text-xs font-semibold text-gray-600 uppercase tracking-wider mb-3">Xem trước</p>
-          <img
+          <Image
             src={preview}
             alt="Preview"
-            className="max-w-full h-auto rounded-lg border border-gray-300 shadow-sm"
+            width={kind === 'avatar' ? 96 : 800}
+            height={kind === 'avatar' ? 96 : 450}
+            unoptimized
+            className={kind === 'avatar' ? 'h-24 w-24 rounded-full object-cover border border-gray-300 shadow-sm' : 'max-w-full h-auto rounded-lg border border-gray-300 shadow-sm'}
           />
         </div>
       )}

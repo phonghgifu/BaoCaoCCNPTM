@@ -2,6 +2,18 @@ import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 import { ProfileForm } from '@/components/profile/profile-form'
 
+/* eslint-disable @next/next/no-img-element */
+
+type OwnedPost = {
+  id: string
+  title: string
+  slug: string
+  status: 'draft' | 'published'
+  created_at: string
+  published_at: string | null
+  image_url: string | null
+}
+
 export const metadata = {
   title: 'Hồ sơ cá nhân',
   description: 'Xem và chỉnh sửa hồ sơ cá nhân',
@@ -40,10 +52,10 @@ export default async function ProfilePage() {
     )
   }
 
-  const posts = ownedPosts || []
-  const publishedCount = posts.filter((post: any) => post.status === 'published').length
-  const draftCount = posts.filter((post: any) => post.status === 'draft').length
-  const latestPosts = (posts as any[]).slice(0, 3)
+  const posts = (ownedPosts || []) as OwnedPost[]
+  const publishedCount = posts.filter((post) => post.status === 'published').length
+  const draftCount = posts.filter((post) => post.status === 'draft').length
+  const latestPosts = posts.slice(0, 3)
 
   return (
     <main className="min-h-screen bg-linear-to-br from-slate-50 to-slate-100 py-12">

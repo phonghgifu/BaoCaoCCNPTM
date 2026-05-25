@@ -2,8 +2,10 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
+import Image from 'next/image'
 import { createClient } from '@/lib/supabase/client'
 import type { Profile } from '@/types/database'
+import { ImageUpload } from '@/components/posts/image-upload'
 
 interface ProfileFormProps {
   profile: Profile
@@ -40,8 +42,8 @@ export function ProfileForm({ profile }: ProfileFormProps) {
       setSuccess(true)
       router.refresh()
       setTimeout(() => setSuccess(false), 3000)
-    } catch (err: any) {
-      setError(err.message || 'Có lỗi xảy ra')
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : 'Có lỗi xảy ra')
     } finally {
       setLoading(false)
     }
@@ -96,6 +98,16 @@ export function ProfileForm({ profile }: ProfileFormProps) {
 
       {/* Avatar URL Field */}
       <div>
+        <ImageUpload
+          kind="avatar"
+          label="Ảnh đại diện"
+          description="Upload avatar vào Supabase Storage hoặc dán URL bên dưới nếu cần."
+          onImageUploaded={setAvatarUrl}
+          disabled={loading}
+        />
+      </div>
+
+      <div>
         <label htmlFor="avatarUrl" className="block text-sm font-semibold text-gray-700 mb-2">
           URL ảnh đại diện
         </label>
@@ -114,9 +126,12 @@ export function ProfileForm({ profile }: ProfileFormProps) {
           <div className="mt-4 p-4 bg-gray-50 rounded-lg border border-gray-200">
             <p className="text-xs font-semibold text-gray-600 uppercase tracking-wider mb-3">Xem trước ảnh đại diện</p>
             <div className="flex items-center gap-4">
-              <img
+              <Image
                 src={avatarUrl}
                 alt="Avatar preview"
+                width={64}
+                height={64}
+                unoptimized
                 className="w-16 h-16 rounded-full object-cover border-2 border-blue-200 shadow-sm"
               />
               <div className="flex-1">
@@ -132,7 +147,7 @@ export function ProfileForm({ profile }: ProfileFormProps) {
       <button
         type="submit"
         disabled={loading}
-        className="w-full px-4 py-3 bg-gradient-to-r from-blue-600 to-blue-700 text-white font-semibold rounded-lg hover:from-blue-700 hover:to-blue-800 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-sm hover:shadow-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+        className="w-full px-4 py-3 bg-linear-to-r from-blue-600 to-blue-700 text-white font-semibold rounded-lg hover:from-blue-700 hover:to-blue-800 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-sm hover:shadow-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
       >
         {loading ? (
           <span className="flex items-center justify-center gap-2">

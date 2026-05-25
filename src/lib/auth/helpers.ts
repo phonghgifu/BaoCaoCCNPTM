@@ -17,6 +17,7 @@ export async function signUp(data: SignUpData) {
       options: {
         data: {
           display_name: data.display_name || '',
+          role: data.role || 'user',
         },
       },
     })
@@ -90,7 +91,7 @@ export async function logout() {
 export async function signInWithGitHub() {
   try {
     const supabase = getSupabaseClient()
-    const { data, error } = await supabase.auth.signInWithOAuth({
+    const { error } = await supabase.auth.signInWithOAuth({
       provider: 'github',
       options: {
         redirectTo: `${window.location.origin}/auth/callback`,
@@ -117,10 +118,7 @@ export async function signInWithGitHub() {
 export async function getSession() {
   try {
     const supabase = getSupabaseClient()
-    const {
-      data: { session },
-      error,
-    } = await supabase.auth.getSession()
+    const { data: { session }, error } = await supabase.auth.getSession()
 
     if (error) throw error
 
