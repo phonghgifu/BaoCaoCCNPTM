@@ -64,9 +64,9 @@ export default function RegisterPage() {
   return (
     <div className="relative isolate flex min-h-[calc(100vh-5rem)] items-center justify-center px-4 py-12 sm:px-6 lg:px-8">
       <div aria-hidden="true" className="pointer-events-none absolute inset-0 -z-10 bg-[radial-gradient(circle_at_top_right,rgba(14,165,233,0.16),transparent_28%),radial-gradient(circle_at_bottom_left,rgba(51,65,85,0.16),transparent_30%)]" />
-      <div className="surface-card w-full max-w-7xl overflow-hidden">
+      <div className="surface-card w-full max-w-6xl overflow-hidden">
         <div className="grid gap-0 lg:grid-cols-[0.95fr_1.05fr]">
-          <div className="order-2 bg-(--surface-solid) p-8 sm:p-10 lg:order-1 lg:p-12">
+          <div className="order-2 bg-[var(--surface-solid)] p-8 sm:p-10 lg:order-1 lg:p-12">
             <div className="text-center">
               <h2 className="text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl">Đăng ký tài khoản</h2>
               <p className="mt-2 text-sm text-slate-600">Tạo tài khoản để bắt đầu viết blog</p>
@@ -133,7 +133,7 @@ export default function RegisterPage() {
               <button
                 type="submit"
                 disabled={loading}
-                className="inline-flex w-full justify-center rounded-2xl bg-linear-to-r from-sky-600 to-blue-700 px-4 py-3 text-sm font-semibold text-white shadow-lg shadow-sky-200/40 transition hover:-translate-y-0.5 hover:shadow-xl focus:outline-none focus:ring-4 focus:ring-sky-100 disabled:cursor-not-allowed disabled:opacity-60"
+                className="inline-flex w-full justify-center rounded-2xl bg-gradient-to-r from-sky-600 to-blue-700 px-4 py-3 text-sm font-semibold text-white shadow-lg shadow-sky-200/40 transition hover:-translate-y-0.5 hover:shadow-xl focus:outline-none focus:ring-4 focus:ring-sky-100 disabled:cursor-not-allowed disabled:opacity-60"
               >
                 {loading ? 'Đang xử lý...' : 'Đăng ký'}
               </button>

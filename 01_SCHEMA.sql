@@ -15,6 +15,7 @@ create table public.profiles (
   id uuid not null references auth.users on delete cascade,
   display_name text,
   avatar_url text,
+  role public.user_role not null default 'user',
   created_at timestamp with time zone default now() not null,
   updated_at timestamp with time zone default now() not null,
   primary key (id)
@@ -24,8 +25,13 @@ create table public.profiles (
 create or replace function public.handle_new_user()
 returns trigger language plpgsql security definer as $$
 begin
-  insert into public.profiles (id, display_name, avatar_url)
-  values (new.id, new.raw_user_meta_data ->> 'display_name', new.raw_user_meta_data ->> 'avatar_url');
+  insert into public.profiles (id, display_name, avatar_url, role)
+  values (
+    new.id, 
+    new.raw_user_meta_data ->> 'display_name', 
+    new.raw_user_meta_data ->> 'avatar_url',
+    coalesce((new.raw_user_meta_data ->> 'role')::public.user_role, 'user'::public.user_role)
+  );
   return new;
 end;
 $$;

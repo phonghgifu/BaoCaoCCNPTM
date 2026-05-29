@@ -5,8 +5,6 @@
  * Chạy: npm run insert-articles
  */
 
-/* eslint-disable @typescript-eslint/no-require-imports, @typescript-eslint/no-unused-vars */
-
 require('dotenv').config();
 
 const { createClient } = require('@supabase/supabase-js');

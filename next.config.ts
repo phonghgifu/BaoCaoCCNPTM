@@ -1,8 +1,4 @@
 import type { NextConfig } from "next";
-import { dirname } from "path";
-import { fileURLToPath } from "url";
-
-const projectRoot = dirname(fileURLToPath(import.meta.url));
 
 const nextConfig: NextConfig = {
   /* config options here */
@@ -10,8 +6,21 @@ const nextConfig: NextConfig = {
     maxInactiveAge: 15 * 1000,
     pagesBufferLength: 5,
   },
-  turbopack: {
-    root: projectRoot,
+  images: {
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'bwsuuckbekvfgahwawvl.supabase.co',
+        port: '',
+        pathname: '/**',
+      },
+      {
+        protocol: 'https',
+        hostname: '**.supabase.co',
+        port: '',
+        pathname: '/**',
+      },
+    ],
   },
   // Disable prerendering if Supabase env vars are not set
   experimental: {

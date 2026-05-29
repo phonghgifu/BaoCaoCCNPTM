@@ -17,15 +17,19 @@ export default async function AdminUsersPage() {
     redirect('/login')
   }
 
-  const isAdmin = false
+  const { data: profile } = await supabase
+    .from('profiles')
+    .select('role')
+    .eq('id', user.id)
+    .single()
 
-  if (!isAdmin) {
+  if (profile?.role !== 'admin') {
     redirect('/dashboard')
   }
 
   const { data: profiles, error } = await supabase
     .from('profiles')
-    .select('id, display_name, avatar_url, created_at, updated_at')
+    .select('id, display_name, avatar_url, role, created_at, updated_at')
     .order('created_at', { ascending: false })
 
   if (error) {

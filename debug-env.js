@@ -5,8 +5,6 @@
  * Usage: node debug-env.js
  */
 
-/* eslint-disable @typescript-eslint/no-require-imports, @typescript-eslint/no-unused-vars */
-
 const fs = require('fs')
 const path = require('path')
 const dotenv = require('dotenv')

@@ -1,8 +1,7 @@
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 import { ProfileForm } from '@/components/profile/profile-form'
-
-/* eslint-disable @next/next/no-img-element */
+import Image from 'next/image'
 
 type OwnedPost = {
   id: string
@@ -26,20 +25,24 @@ export default async function ProfilePage() {
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) redirect('/login')
 
-  // Lấy profile của user
-  const { data: profile, error } = await supabase
-    .from('profiles')
-    .select('*')
-    .eq('id', user.id)
-    .single()
+  // Fetch profile and posts concurrently
+  const [profileResult, ownedPostsResult] = await Promise.all([
+    supabase.from('profiles').select('*').eq('id', user.id).single(),
+    supabase
+      .from('posts')
+      .select('id, title, slug, status, created_at, published_at, image_url')
+      .eq('author_id', user.id)
+      .order('created_at', { ascending: false }),
+  ])
 
-  const { data: ownedPosts } = await supabase
-    .from('posts')
-    .select('id, title, slug, status, created_at, published_at, image_url')
-    .eq('author_id', user.id)
-    .order('created_at', { ascending: false })
-
+  const { data: profile, error } = profileResult
+  const { data: ownedPosts } = ownedPostsResult
+  
   if (error || !profile) {
+    // Log the actual error for debugging purposes on the server
+    if (error) {
+      console.error('Failed to fetch profile:', error.message)
+    }
     return (
       <main className="min-h-screen bg-linear-to-br from-slate-50 to-slate-100">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
@@ -75,10 +78,12 @@ export default async function ProfilePage() {
               <div className="space-y-6">
                 {/* Avatar Preview */}
                 {profile.avatar_url && (
-                  <div className="text-center pb-6 border-b border-gray-200">
-                    <img
+                  <div className="relative text-center pb-6 border-b border-gray-200">
+                    <Image
                       src={profile.avatar_url}
                       alt="Avatar"
+                      width={96}
+                      height={96}
                       className="w-24 h-24 rounded-full object-cover mx-auto border-4 border-blue-100 shadow-md"
                     />
                   </div>
@@ -150,11 +155,17 @@ export default async function ProfilePage() {
             {latestPosts.length > 0 ? latestPosts.map((post) => (
               <a
                 key={post.id}
-                href={`/posts/${post.slug}`}
+                href={`/blog/${post.slug}`}
                 className="group flex gap-4 rounded-2xl border border-gray-100 bg-gray-50 p-4 transition hover:border-blue-200 hover:bg-blue-50/50"
               >
                 {post.image_url ? (
-                  <img src={post.image_url} alt={post.title} className="h-20 w-28 rounded-lg object-cover shrink-0" />
+                  <Image
+                    src={post.image_url}
+                    alt={post.title}
+                    width={112}
+                    height={80}
+                    className="h-20 w-28 rounded-lg object-cover shrink-0"
+                  />
                 ) : (
                   <div className="h-20 w-28 rounded-lg bg-linear-to-br from-blue-500 via-cyan-500 to-violet-500 shrink-0" />
                 )}

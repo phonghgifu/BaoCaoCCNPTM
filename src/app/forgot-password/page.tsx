@@ -1,11 +1,11 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useMemo } from 'react'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/client'
 
 export default function ForgotPasswordPage() {
-  const supabase = createClient()
+  const supabase = useMemo(createClient, [])
   
   const [email, setEmail] = useState('')
   const [message, setMessage] = useState<string | null>(null)
@@ -18,23 +18,18 @@ export default function ForgotPasswordPage() {
     setMessage(null)
     setLoading(true)
 
-    try {
-      const { error } = await supabase.auth.resetPasswordForEmail(email, {
-        redirectTo: `${window.location.origin}/reset-password`,
-      })
+    const { error } = await supabase.auth.resetPasswordForEmail(email, {
+      redirectTo: `${window.location.origin}/reset-password`,
+    })
 
-      if (error) {
-        setError(error.message)
-        return
-      }
-
+    if (error) {
+      setError(error.message)
+    } else {
       setMessage('Kiểm tra email của bạn để reset mật khẩu. Link sẽ hết hạn trong 1 giờ.')
       setEmail('')
-    } catch {
-      setError('Có lỗi xảy ra. Vui lòng thử lại.')
-    } finally {
-      setLoading(false)
     }
+
+    setLoading(false)
   }
 
   return (

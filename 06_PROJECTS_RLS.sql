@@ -21,16 +21,16 @@ create policy "Authenticated users can create projects"
 on public.projects for insert
 with check (auth.role() = 'authenticated');
 
--- Policy: Tất cả users có thể update projects (tuỳ chọn - nếu muốn restrict, xóa dòng này)
-create policy "Any authenticated user can update projects"
+-- Policy: Chỉ chủ sở hữu mới có thể update project của mình
+create policy "Owners can update their own projects"
 on public.projects for update
-using (auth.role() = 'authenticated')
-with check (auth.role() = 'authenticated');
+using (auth.uid() = (select author_id from public.posts where id = project_id limit 1)) -- Giả định project liên kết với post, cần điều chỉnh
+with check (auth.uid() = (select author_id from public.posts where id = project_id limit 1)); -- Cần thêm user_id vào bảng projects
 
--- Policy: Tất cả users có thể delete projects (tuỳ chọn - nếu muốn restrict, xóa dòng này)
-create policy "Any authenticated user can delete projects"
+-- Policy: Chỉ chủ sở hữu mới có thể delete project của mình
+create policy "Owners can delete their own projects"
 on public.projects for delete
-using (auth.role() = 'authenticated');
+using (auth.uid() = (select author_id from public.posts where id = project_id limit 1)); -- Cần thêm user_id vào bảng projects
 
 -- ============================================================
 -- POLICIES CHO BẢNG PROJECT_LIKES

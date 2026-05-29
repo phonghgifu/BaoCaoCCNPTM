@@ -111,18 +111,18 @@ export default async function HomePage() {
     <>
       {/* Hero Section - Enhanced */}
       <section className="relative overflow-hidden">
-        {/* Background gradient with subtle animated blobs */}
-        <div className="absolute inset-0 bg-linear-to-br from-blue-50 to-white" />
+        {/* Background gradient with animated elements */}
+        <div className="absolute inset-0 bg-linear-to-br from-blue-50 via-white to-purple-50" />
         <div className="absolute inset-0 overflow-hidden">
-          <div className="absolute -top-28 -right-24 w-48 h-48 bg-blue-200 rounded-full mix-blend-multiply filter blur-2xl opacity-10 animate-blob" />
-          <div className="absolute -bottom-28 -left-24 w-48 h-48 bg-purple-200 rounded-full mix-blend-multiply filter blur-2xl opacity-10 animate-blob animation-delay-2000" />
-          <div className="absolute top-1/2 left-1/2 w-48 h-48 bg-cyan-200 rounded-full mix-blend-multiply filter blur-2xl opacity-10 animate-blob animation-delay-4000" />
+          <div className="absolute -top-40 -right-40 w-80 h-80 bg-blue-200 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob" />
+          <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-purple-200 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob animation-delay-2000" />
+          <div className="absolute top-1/2 left-1/2 w-80 h-80 bg-cyan-200 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob animation-delay-4000" />
         </div>
 
-        <div className="relative section-shell py-10 sm:py-16 lg:py-20 xl:py-24">
+        <div className="relative section-shell py-12 sm:py-20 lg:py-28 xl:py-32">
           <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-            <div className="grid items-center gap-12 lg:grid-cols-2 lg:gap-16">
-              <div className="w-full lg:pr-8 space-y-6 lg:space-y-8">
+            <div className="grid items-center gap-12 lg:grid-cols-[1.05fr_0.95fr] lg:gap-16">
+              <div className="max-w-3xl space-y-8 lg:space-y-10">
                 {/* Hero Label */}
                 <div className="inline-flex items-center rounded-full border border-blue-200/80 bg-white/80 px-4 py-2 text-xs font-semibold uppercase tracking-widest text-blue-700 shadow-lg shadow-blue-100/50 backdrop-blur">
                   <span className="mr-2 inline-block h-2 w-2 rounded-full bg-blue-600 animate-pulse" />
@@ -130,11 +130,11 @@ export default async function HomePage() {
                 </div>
 
                 {/* Main Headline */}
-                <div className="space-y-3">
-                  <h1 className="text-2xl font-extrabold leading-tight tracking-tight text-gray-900 sm:text-4xl lg:text-5xl xl:text-5xl">
+                <div className="space-y-4">
+                  <h1 className="text-5xl font-black leading-[1.02] tracking-tight text-gray-900 sm:text-6xl lg:text-7xl xl:text-8xl">
                     Blog & Portfolio
                     <br />
-                    <span className="inline-block bg-clip-text text-transparent bg-linear-to-r from-blue-600 to-cyan-500">
+                    <span className="inline-block bg-linear-to-r from-blue-600 via-cyan-500 to-purple-600 bg-clip-text text-transparent">
                       Chuyên Nghiệp
                     </span>
                   </h1>
@@ -163,7 +163,7 @@ export default async function HomePage() {
                 </div>
 
                 {/* Stats Cards */}
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-6 sm:gap-4 lg:gap-6">
+                <div className="grid grid-cols-3 gap-3 pt-6 sm:gap-4 lg:gap-6">
                   {stats.map((stat) => (
                     <div
                       key={stat.label}
@@ -181,8 +181,8 @@ export default async function HomePage() {
 
               {/* Hero Visual */}
               <div className="relative">
-                <div className="absolute inset-0 -z-10 rounded-4xl bg-linear-to-br from-blue-50 to-purple-50 blur-2xl" />
-                <div className="surface-card overflow-hidden border-white/70 bg-white/90 p-4 shadow-[0_16px_60px_rgba(15,23,42,0.08)] backdrop-blur-md sm:p-6 w-full">
+                <div className="absolute inset-0 -z-10 rounded-4xl bg-linear-to-br from-blue-200/40 via-cyan-100/30 to-purple-200/40 blur-3xl" />
+                <div className="surface-card overflow-hidden border-white/70 bg-white/75 p-4 shadow-[0_24px_80px_rgba(15,23,42,0.12)] backdrop-blur-xl sm:p-5">
                   <div className="rounded-3xl border border-slate-200/80 bg-slate-950 p-4 text-white shadow-2xl shadow-slate-900/20 sm:p-5">
                     <div className="flex items-center justify-between border-b border-white/10 pb-4">
                       <div className="flex items-center gap-2">
@@ -196,7 +196,7 @@ export default async function HomePage() {
                     </div>
 
                     <div className="mt-5 grid gap-4">
-                      <div className="rounded-[1.25rem] border border-white/10 bg-linear-to-r from-blue-500 to-cyan-500 p-5 shadow-md w-full">
+                      <div className="rounded-[1.25rem] border border-white/10 bg-linear-to-br from-blue-500 via-cyan-500 to-purple-500 p-5 shadow-2xl shadow-cyan-500/20">
                         <p className="text-xs font-semibold uppercase tracking-[0.28em] text-white/80">Dashboard Snapshot</p>
                         <h3 className="mt-3 text-2xl font-black leading-tight text-white">Nội dung rõ ràng, hierarchy mạnh, đọc nhanh trên mọi thiết bị.</h3>
                         <div className="mt-5 flex items-center gap-3">
@@ -291,17 +291,17 @@ export default async function HomePage() {
               <span className="text-sm font-bold uppercase tracking-wider text-gray-600">Bài viết nổi bật</span>
             </div>
 
-            <article className="group overflow-hidden rounded-3xl post-card transition">
+            <article className="group overflow-hidden rounded-3xl bg-linear-to-br from-gray-900 to-gray-800 shadow-2xl transition hover:shadow-3xl">
               <div className="grid gap-8 lg:grid-cols-2 lg:items-stretch">
                 {/* Image */}
                 {featuredPost.image_url ? (
-                  <div className="relative overflow-hidden lg:h-auto">
+                  <div className="relative h-80 overflow-hidden lg:h-auto">
                     <ImageWithLQIP
                       src={featuredPost.image_url}
                       alt={featuredPost.title || 'Featured Post'}
-                      className="card-thumb transition duration-500 group-hover:scale-105"
+                      className="h-full w-full object-cover transition duration-500 group-hover:scale-110"
                     />
-                    <div className="absolute inset-0 bg-linear-to-r from-black/20 via-transparent to-transparent" />
+                    <div className="absolute inset-0 bg-linear-to-r from-gray-900 via-transparent to-transparent" />
                   </div>
                 ) : (
                   <div className="flex h-80 items-center justify-center bg-linear-to-br from-blue-600 via-purple-600 to-pink-600 lg:h-auto">

@@ -1,4 +1,6 @@
-@import "tailwindcss";
+@import "tailwindcss/theme.css";
+@import "tailwindcss/preflight.css";
+@import "tailwindcss/utilities.css";
 
 :root {
   --page-bg: #f8fafc;
@@ -42,12 +44,12 @@ html {
 
 body {
   background:
-    radial-gradient(circle at top left, rgba(59, 130, 246, 0.03), transparent 28%),
-    radial-gradient(circle at top right, rgba(168, 85, 247, 0.02), transparent 24%),
+    radial-gradient(circle at top left, rgba(59, 130, 246, 0.06), transparent 28%),
+    radial-gradient(circle at top right, rgba(168, 85, 247, 0.05), transparent 24%),
     var(--page-bg);
   color: var(--page-fg);
   font-family: inherit;
-  line-height: 1.6;
+  line-height: 1.7;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
@@ -156,31 +158,9 @@ button {
 .surface-card {
   background: var(--surface-solid);
   border: 1px solid var(--surface-border);
-  box-shadow: 0 10px 30px rgba(15, 23, 42, 0.06);
+  box-shadow: 0 18px 60px rgba(15, 23, 42, 0.10);
   border-radius: var(--radius-card);
 }
-
-/* Unified post/card style for consistent UI */
-.post-card {
-  background: var(--surface-solid);
-  border: 1px solid var(--surface-border);
-  border-radius: 1.25rem;
-  box-shadow: 0 8px 24px rgba(2,6,23,0.06);
-  transition: transform 0.18s ease, box-shadow 0.18s ease;
-}
-.post-card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 18px 40px rgba(2,6,23,0.08);
-}
-.post-card .card-thumb {
-  width: 100%;
-  aspect-ratio: 16/9;
-  object-fit: cover;
-  border-top-left-radius: 1.25rem;
-  border-top-right-radius: 1.25rem;
-}
-.post-card .card-body { padding: 1rem; }
-.post-card .card-meta { color: var(--surface-muted); font-size: 0.875rem; }
 
 /* Button utilities */
 .btn {
@@ -254,32 +234,6 @@ select:focus-visible {
 .section-shell {
   position: relative;
   isolation: isolate;
-}
-
-/* Add vertical rhythm between sections to avoid cramped layout */
-.section-shell { margin-bottom: 2.5rem; }
-
-/* Mobile-specific tweaks */
-@media (max-width: 640px) {
-  :root {
-    --space-lg: 1rem;
-  }
-
-  .section-shell {
-    padding-left: 1rem;
-    padding-right: 1rem;
-    margin-bottom: 1.25rem;
-  }
-
-  .post-card {
-    border-radius: 1rem;
-  }
-
-  .post-card .card-body { padding: 0.75rem; }
-
-  .card-thumb { aspect-ratio: 4/3; }
-
-  .surface-card { padding: 0.75rem !important; }
 }
 
 .section-shell::before {
@@ -370,15 +324,15 @@ img[data-loaded='true'] {
     transform: translate(0, 0) scale(1);
   }
   33% {
-    transform: translate(12px, -20px) scale(1.05);
+    transform: translate(30px, -50px) scale(1.1);
   }
   66% {
-    transform: translate(-10px, 10px) scale(0.98);
+    transform: translate(-20px, 20px) scale(0.9);
   }
 }
 
 .animate-blob {
-  animation: blob 8s infinite;
+  animation: blob 7s infinite;
 }
 
 .animation-delay-2000 {

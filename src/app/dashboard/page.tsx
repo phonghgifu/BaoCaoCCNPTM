@@ -32,8 +32,14 @@ export default async function DashboardPage() {
     redirect('/login')
   }
 
-  const viewerRole: UserRole = 'user'
-  const elevated = false
+  const { data: profile } = await supabase
+    .from('profiles')
+    .select('role')
+    .eq('id', user.id)
+    .single()
+
+  const viewerRole = (profile?.role ?? 'user') as UserRole
+  const elevated = viewerRole === 'admin' || viewerRole === 'editor'
   const posts = await getDashboardPosts(supabase, user.id)
   const overview = await getDashboardOverview(supabase, user.id, viewerRole)
 
@@ -253,6 +259,14 @@ export default async function DashboardPage() {
                   >
                     👤 Hồ Sơ
                   </Link>
+                  {viewerRole === 'admin' && (
+                    <Link
+                      href="/dashboard/admin/users"
+                      className="block w-full rounded-2xl border border-blue-200 bg-blue-50 px-4 py-3 text-center font-bold text-blue-700 transition hover:bg-blue-100"
+                    >
+                      👥 Quản Trị Người Dùng
+                    </Link>
+                  )}
                 </div>
               </div>
 

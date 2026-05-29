@@ -6,7 +6,8 @@ drop table if exists public.projects cascade;
 
 -- Create projects table
 create table public.projects (
-  id serial primary key,
+  id uuid default gen_random_uuid() not null primary key,
+  user_id uuid not null references public.profiles on delete cascade,
   title text not null,
   description text,
   technologies text[] default array[]::text[],
@@ -21,7 +22,7 @@ comment on table public.projects is 'Portfolio projects';
 -- Create project_likes table
 create table public.project_likes (
   id uuid default gen_random_uuid() not null primary key,
-  project_id integer not null references public.projects on delete cascade,
+  project_id uuid not null references public.projects on delete cascade,
   user_id uuid not null references public.profiles on delete cascade,
   created_at timestamp with time zone default now() not null,
   unique(project_id, user_id)
@@ -31,6 +32,7 @@ comment on table public.project_likes is 'Likes on portfolio projects';
 
 -- Create indexes
 create index projects_created_at_idx on public.projects (created_at desc);
+create index projects_user_id_idx on public.projects (user_id);
 create index project_likes_project_id_idx on public.project_likes (project_id);
 create index project_likes_user_id_idx on public.project_likes (user_id);
 create index project_likes_created_at_idx on public.project_likes (created_at desc);
