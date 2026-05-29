@@ -75,7 +75,7 @@ export default function LoginPage() {
   return (
     <div className="relative isolate flex min-h-[calc(100vh-5rem)] items-center justify-center px-4 py-12 sm:px-6 lg:px-8">
       <div aria-hidden="true" className="pointer-events-none absolute inset-0 -z-10 bg-[radial-gradient(circle_at_top_left,rgba(14,165,233,0.16),transparent_28%),radial-gradient(circle_at_bottom_right,rgba(51,65,85,0.16),transparent_30%)]" />
-      <div className="surface-card w-full max-w-6xl overflow-hidden">
+      <div className="surface-card w-full max-w-7xl overflow-hidden">
         <div className="grid gap-0 lg:grid-cols-[1.05fr_0.95fr]">
           <div className="bg-[linear-gradient(160deg,rgba(15,23,42,0.98),rgba(30,41,59,0.96))] p-8 text-slate-100 sm:p-10 lg:p-12">
             <p className="inline-flex rounded-full border border-sky-400/30 bg-sky-400/10 px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.3em] text-sky-200">Professional Blog</p>
@@ -95,7 +95,7 @@ export default function LoginPage() {
             </div>
           </div>
 
-          <div className="bg-[var(--surface-solid)] p-8 sm:p-10 lg:p-12">
+          <div className="bg-white p-8 sm:p-10 lg:p-12 dark:bg-slate-900">
             <div className="text-center">
               <h2 className="text-3xl font-bold tracking-tight text-slate-900">Đăng nhập</h2>
               <p className="mt-2 text-sm text-slate-600">Đăng nhập để quản lý blog của bạn</p>
@@ -130,7 +130,7 @@ export default function LoginPage() {
                   <div className="w-full border-t border-slate-200 dark:border-slate-700" />
                 </div>
                 <div className="relative flex justify-center text-sm">
-                  <span className="rounded-full bg-[var(--surface-solid)] px-3 text-slate-500 dark:bg-slate-900 dark:text-slate-400">Hoặc</span>
+                  <span className="rounded-full bg-white px-3 text-slate-500 dark:bg-slate-900 dark:text-slate-400">Hoặc</span>
                 </div>
               </div>
 
@@ -170,7 +170,7 @@ export default function LoginPage() {
                 <button
                   type="submit"
                   disabled={loading}
-                  className="inline-flex w-full justify-center rounded-2xl bg-gradient-to-r from-sky-600 to-blue-700 px-4 py-3 text-sm font-semibold text-white shadow-lg shadow-sky-200/40 transition hover:-translate-y-0.5 hover:shadow-xl focus:outline-none focus:ring-4 focus:ring-sky-100 disabled:cursor-not-allowed disabled:opacity-60"
+                  className="inline-flex w-full justify-center rounded-2xl bg-linear-to-r from-sky-600 to-blue-700 px-4 py-3 text-sm font-semibold text-white shadow-lg shadow-sky-200/40 transition hover:-translate-y-0.5 hover:shadow-xl focus:outline-none focus:ring-4 focus:ring-sky-100 disabled:cursor-not-allowed disabled:opacity-60"
                 >
                   {loading ? 'Đang xử lý...' : 'Đăng nhập'}
                 </button>

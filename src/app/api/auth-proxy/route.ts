@@ -13,14 +13,14 @@ export async function GET() {
 
     const { data: profile } = await supabase
       .from('profiles')
-      .select('display_name, avatar_url, role')
+      .select('display_name, avatar_url')
       .eq('id', user.id)
       .single()
 
     return NextResponse.json({
       user,
       profile: profile ?? null,
-      role: profile?.role ?? 'user',
+      role: 'user',
     })
   } catch (err) {
     return NextResponse.json({ user: null, profile: null, role: 'user', error: String(err) }, { status: 500 })

@@ -43,7 +43,7 @@ console.log('\n3️⃣  Connection Test:')
 if (url && key && !url.includes('your-') && !key.includes('your-')) {
   try {
     const { createClient } = await import('@supabase/supabase-js')
-    const supabase = createClient(url, key)
+    createClient(url, key)
     console.log('   ✅ Supabase client created successfully')
     console.log('   ℹ️  You can now make queries to the database')
   } catch (error) {

@@ -27,14 +27,11 @@ export function generatePostSlug(text: string) {
 }
 
 async function getCurrentUserRole(client: SupabaseClient, userId: string) {
-  const { data, error } = await client
-    .from('profiles')
-    .select('role')
-    .eq('id', userId)
-    .single()
-
-  if (error) throw error
-  return (data?.role ?? 'user') as UserRole
+  // Temporary fallback until `profiles.role` is available in the database.
+  // This keeps the app running without crashing on role lookups.
+  void client
+  void userId
+  return 'user' as UserRole
 }
 
 function normalizeQuery(query: string) {
@@ -174,8 +171,7 @@ export async function getDashboardPosts(client: SupabaseClient, userId: string):
       *,
       profiles (
         display_name,
-        avatar_url,
-        role
+        avatar_url
       )
     `)
     .order('created_at', { ascending: false })

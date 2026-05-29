@@ -447,11 +447,11 @@ async function seedPosts() {
 
     console.log(`✅ Đã seed ${data?.length || 0} bài viết (mỗi chủ đề >= 3 bài)!`)
     console.log('Danh sách bài viết:')
-    data?.forEach((post: any, idx: number) => {
+    data?.forEach((post: { title?: string | null }, idx: number) => {
       console.log(`  ${idx + 1}. ${post.title}`)
     })
-  } catch (error: any) {
-    console.error('❌ Lỗi:', error.message)
+  } catch (error: unknown) {
+    console.error('❌ Lỗi:', error instanceof Error ? error.message : String(error))
   }
 }
 

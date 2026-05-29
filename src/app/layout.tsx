@@ -44,8 +44,10 @@ export default function RootLayout({
           <a href="#content" className="skip-link sr-only">Bỏ qua tới nội dung</a>
           <div aria-hidden="true" className="pointer-events-none fixed inset-0 -z-10 bg-[radial-gradient(circle_at_top_left,rgba(59,130,246,0.16),transparent_24%),radial-gradient(circle_at_top_right,rgba(14,165,233,0.14),transparent_22%),radial-gradient(circle_at_bottom,rgba(168,85,247,0.10),transparent_28%)]" />
           <Header />
-          <main id="content" className="relative min-h-screen bg-(--page-bg) text-(--page-fg) transition-colors duration-300">
-            {children}
+          <main id="content" className="relative min-h-screen overflow-x-hidden bg-(--page-bg) text-(--page-fg) transition-colors duration-300">
+            <div className="w-full">
+              {children}
+            </div>
           </main>
         </AuthProvider>
       </body>

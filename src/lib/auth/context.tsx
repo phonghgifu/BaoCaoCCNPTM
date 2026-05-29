@@ -10,13 +10,20 @@ const AuthContext = createContext<AuthSession | undefined>(undefined)
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const hasSupabaseEnv = !!getSupabaseEnv()
-  const [authSession, setAuthSession] = useState<AuthSession>({
+  const forceAnonymous = process.env.NEXT_PUBLIC_FORCE_ANONYMOUS === '1'
+  const initialAuth: AuthSession = {
     user: null,
-    isLoading: hasSupabaseEnv,
+    isLoading: hasSupabaseEnv && !forceAnonymous,
     isAuthenticated: false,
-  })
+  }
+
+  const [authSession, setAuthSession] = useState<AuthSession>(initialAuth)
 
   useEffect(() => {
+    if (forceAnonymous) {
+      // Dev mode: do nothing further — initial state already reflects anonymous mode
+      return
+    }
     let supabase: ReturnType<typeof createClient> | null = null
 
     try {
@@ -72,7 +79,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     } catch (error) {
       console.warn('Failed to subscribe to auth changes:', error)
     }
-  }, [])
+  }, [forceAnonymous, hasSupabaseEnv])
 
   return (
     <AuthContext.Provider value={authSession}>

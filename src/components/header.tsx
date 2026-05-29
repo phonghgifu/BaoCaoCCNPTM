@@ -69,18 +69,18 @@ export function Header() {
   return (
     <header className="sticky top-0 z-50 border-b border-white/50 bg-white/70 shadow-[0_14px_40px_rgba(15,23,42,0.06)] backdrop-blur-xl dark:border-slate-800/60 dark:bg-slate-950/60">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div className="flex h-18 items-center justify-between gap-4 py-2">
+        <div className="flex h-14 sm:h-16 items-center justify-between gap-3 py-2 sm:py-3">
           <Link href="/" className="group flex items-center space-x-3">
-            <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-linear-to-br from-blue-600 via-cyan-500 to-emerald-400 text-white shadow-lg shadow-blue-200/40 ring-1 ring-white/40 transition group-hover:-translate-y-0.5 group-hover:scale-105">
-              <span className="font-bold">P</span>
+            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-gradient-to-br from-blue-600 to-cyan-500 text-white shadow-sm ring-1 ring-white/20 transition group-hover:-translate-y-0.5 group-hover:scale-105">
+              <span className="font-semibold">P</span>
             </div>
             <div className="hidden sm:block">
-              <div className="text-[10px] uppercase tracking-[0.28em] text-(--surface-muted)">Professional Blog</div>
-              <span className="text-lg font-bold tracking-tight text-(--page-fg) lg:text-xl">Chia Sẻ Kiến Thức</span>
+              <div className="text-[10px] uppercase tracking-[0.28em] text-[var(--surface-muted)]">Professional Blog</div>
+              <span className="text-lg font-bold tracking-tight text-[var(--page-fg)] lg:text-xl">Chia Sẻ Kiến Thức</span>
             </div>
           </Link>
 
-          <form onSubmit={handleSearch} role="search" aria-label="Tìm kiếm" className="hidden lg:flex flex-1 max-w-xl items-center gap-3">
+          <form onSubmit={handleSearch} role="search" aria-label="Tìm kiếm" className="hidden md:flex flex-1 max-w-lg items-center gap-3">
             <div className="relative flex-1">
               <input
                 type="search"
@@ -88,17 +88,17 @@ export function Header() {
                 onChange={(event) => setSearchTerm(event.target.value)}
                 aria-label="Tìm kiếm nội dung"
                 placeholder="Tìm bài viết, dự án, chủ đề..."
-                className="w-full rounded-2xl border border-(--surface-border) bg-white/90 px-4 py-3 pr-12 text-sm shadow-sm outline-none transition focus:border-blue-500 dark:bg-slate-900/80"
+                className="w-full rounded-2xl border border-[var(--surface-border)] bg-white/90 px-4 py-3 pr-12 text-sm shadow-sm outline-none transition focus:border-blue-500 dark:bg-slate-900/80"
               />
-              <span className="pointer-events-none absolute inset-y-0 right-4 flex items-center text-(--surface-muted)">⌘K</span>
+              <span className="pointer-events-none absolute inset-y-0 right-4 flex items-center text-[var(--surface-muted)]">⌘K</span>
             </div>
-            <button type="submit" className="btn btn-primary press-scale shadow-lg shadow-blue-200/40">
+            <button type="submit" className="btn btn-primary press-scale shadow-sm">
               Tìm kiếm
             </button>
           </form>
 
-          <div className="hidden md:flex items-center gap-2 lg:gap-3">
-            <Link href="/" className={navItemClass('/')}>
+            <div className="hidden md:flex items-center gap-2 lg:gap-3">
+                <Link href="/" className={navItemClass('/')}> 
               Trang Chủ
             </Link>
             <Link href="/blog" className={navItemClass('/blog')}>
@@ -108,25 +108,25 @@ export function Header() {
               Portfolio
             </Link>
 
-            <button
-              type="button"
-              onClick={() => applyTheme(theme === 'dark' ? 'light' : 'dark')}
-              className="btn btn-ghost tap-target shadow-sm"
-              aria-label="Chuyển giao diện sáng tối"
-            >
-              {theme === 'dark' ? '☀️ Sáng' : '🌙 Tối'}
-            </button>
+                <button
+                  type="button"
+                  onClick={() => applyTheme(theme === 'dark' ? 'light' : 'dark')}
+                  className="btn btn-ghost tap-target shadow-sm"
+                  aria-label="Chuyển giao diện sáng tối"
+                >
+                  {theme === 'dark' ? '☀️' : '🌙'}
+                </button>
 
             {isAuthenticated ? (
-              <div className="flex items-center gap-3 rounded-2xl border border-(--surface-border) bg-white/90 px-3 py-2 shadow-sm backdrop-blur-sm dark:bg-slate-900/80">
+                <div className="flex items-center gap-3 rounded-2xl border border-[var(--surface-border)] bg-white/90 px-3 py-2 shadow-sm backdrop-blur-sm dark:bg-slate-900/80">
                 <div className="flex h-8 w-8 items-center justify-center rounded-full bg-blue-100 text-sm font-bold text-blue-700">
                   {user?.email?.[0].toUpperCase()}
                 </div>
                 <div className="hidden xl:block">
-                  <p className="text-xs text-(--surface-muted)">Đang đăng nhập</p>
-                  <p className="max-w-40 truncate text-sm font-semibold text-(--page-fg)">{user?.email}</p>
+                  <p className="text-xs text-[var(--surface-muted)]">Đang đăng nhập</p>
+                  <p className="max-w-40 truncate text-sm font-semibold text-[var(--page-fg)]">{user?.email}</p>
                 </div>
-                <Link href="/dashboard" className="btn btn-primary shadow-lg shadow-blue-200/40">
+                <Link href="/dashboard" className="btn btn-primary shadow-sm">
                   Dashboard
                 </Link>
                 <button
@@ -138,11 +138,11 @@ export function Header() {
                 </button>
               </div>
             ) : (
-              <div className="flex items-center gap-3 rounded-2xl border border-(--surface-border) bg-white/90 px-3 py-2 shadow-sm backdrop-blur-sm dark:bg-slate-900/80">
+              <div className="flex items-center gap-3 rounded-2xl border border-[var(--surface-border)] bg-white/90 px-3 py-2 shadow-sm backdrop-blur-sm dark:bg-slate-900/80">
                 <Link href="/login" className="btn btn-ghost">
                   Đăng Nhập
                 </Link>
-                <Link href="/register" className="btn btn-primary shadow-lg shadow-blue-200/40">
+                <Link href="/register" className="btn btn-primary shadow-sm">
                   Đăng Ký
                 </Link>
               </div>
@@ -188,8 +188,8 @@ export function Header() {
               aria-hidden="true"
             />
             {/* Mobile menu */}
-            <div id="mobile-menu" role="navigation" aria-label="Điều hướng chính" className="mobile-menu-enter md:hidden fixed inset-x-0 top-18 z-40 border-b border-(--surface-border) bg-(--surface-solid) backdrop-blur-md space-y-4 py-4 px-2 max-h-[calc(100vh-72px)] overflow-y-auto">
-              <div className="space-y-2 rounded-2xl border border-(--surface-border) bg-(--surface-soft) p-3">
+            <div id="mobile-menu" role="navigation" aria-label="Điều hướng chính" className="mobile-menu-enter md:hidden fixed inset-x-0 top-full z-40 border-b border-[var(--surface-border)] bg-[var(--surface-solid)] backdrop-blur-md space-y-4 py-4 px-2 max-h-[calc(100dvh-4.5rem)] overflow-y-auto">
+                <div className="space-y-2 rounded-2xl border border-[var(--surface-border)] bg-[var(--surface-soft)] p-3">
                 <label className="block text-xs uppercase tracking-[0.22em] font-semibold text-(--surface-muted) px-2">Điều hướng</label>
                 <Link href="/" className="menu-item block rounded-2xl px-4 py-3 text-(--page-fg) transition hover:bg-(--surface-soft)" onClick={() => setIsMobileMenuOpen(false)}>
                   Trang Chủ
@@ -203,13 +203,13 @@ export function Header() {
                 <button
                   type="button"
                   onClick={() => applyTheme(theme === 'dark' ? 'light' : 'dark')}
-                  className="w-full rounded-2xl px-4 py-3 text-left text-(--page-fg) transition hover:bg-(--surface-soft)"
+                  className="w-full rounded-2xl px-4 py-3 text-left text-[var(--page-fg)] transition hover:bg-[var(--surface-soft)]"
                 >
                   {theme === 'dark' ? '☀️ Chuyển sang giao diện sáng' : '🌙 Chuyển sang giao diện tối'}
                 </button>
 
                 {isAuthenticated ? (
-                  <div className="space-y-3 border-t border-(--surface-border) pt-3">
+                    <div className="space-y-3 border-t border-[var(--surface-border)] pt-3">
                     <p className="px-4 text-sm text-(--surface-muted)">{user?.email}</p>
                     <Link
                       href="/dashboard"
@@ -227,7 +227,7 @@ export function Header() {
                     </button>
                   </div>
                 ) : (
-                  <div className="space-y-3 border-t border-(--surface-border) pt-3">
+                  <div className="space-y-3 border-t border-[var(--surface-border)] pt-3">
                     <Link
                       href="/login"
                       className="block rounded-2xl border border-(--surface-border) px-4 py-3 text-center font-medium text-(--page-fg) hover:bg-(--surface-soft) transition"
